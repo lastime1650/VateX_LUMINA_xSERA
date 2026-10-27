@@ -1,0 +1,24 @@
+[Unit]
+Description=xSERA read-only external sensor JSON forwarding (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=xsera-sensor
+Group=xsera-sensor
+EnvironmentFile=/etc/xsera-sensors/%i.env
+ExecStart=/opt/xsera-venv/bin/python /opt/xsera/tools/forward_analysis_sensor.py --endpoint ${XSERA_ENDPOINT} --binding ${XSERA_BINDING} --username ${XSERA_USERNAME} --password-env XSERA_SENSOR_PASSWORD --log ${XSERA_SENSOR_LOG} --state /var/lib/xsera-sensors/%i.json
+Restart=on-failure
+RestartSec=10
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/xsera-sensors
+UMask=0077
+MemoryMax=128M
+CPUQuota=10%
+
+[Install]
+WantedBy=multi-user.target

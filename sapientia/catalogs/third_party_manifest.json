@@ -1,0 +1,122 @@
+{
+  "schema": "xsera.third-party-content.v1",
+  "recorded_date": "2026-10-16",
+  "project_owned_license": "Apache-2.0",
+  "license_scope_note": "Third-party content retains its original license. Full rule/author provenance is in referenced manifests. This inventory is not legal clearance.",
+  "bundled_manifests_and_licenses": [
+    {
+      "path": "sapientia/catalogs/provenance.json",
+      "bytes": 4827,
+      "sha256": "5cac682a766d5eae15af54546c9557337c6113d00a20a800ec87483f3f9c81e7"
+    },
+    {
+      "path": "sapientia/catalogs/LICENSE-MITRE.txt",
+      "bytes": 1354,
+      "sha256": "738144f7fb054722a4ef9d3367c51710341dc12fc574c6ac3a41daaaecd8bf5e"
+    },
+    {
+      "path": "sapientia/catalogs/yara/manifest.json",
+      "bytes": 2714053,
+      "sha256": "8fab59933420f358e88e3613a618e7eaa273b22deb8d2c4416d9db209cdbf28e"
+    },
+    {
+      "path": "sapientia/catalogs/capa/manifest.json",
+      "bytes": 206183,
+      "sha256": "139faa3d3230f50490dddb3171d903603b7a76adfd5f3479a4a91faa54044e5d"
+    },
+    {
+      "path": "sapientia/catalogs/capa/LICENSE.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "sapientia/catalogs/yara/licenses/bartblaze-LICENSE.txt",
+      "bytes": 1061,
+      "sha256": "a90123cce1ab170abaa97396f6a0b8a8c8d061f1e774f2a7eb2a421925fb5a0e"
+    },
+    {
+      "path": "sapientia/catalogs/yara/licenses/jpcert-LICENSE.txt",
+      "bytes": 1661,
+      "sha256": "6ef29cc700c03e436ac06e4718cdda5d88885d3cb3337ed06e7e1ceb7483faba"
+    },
+    {
+      "path": "sapientia/catalogs/yara/licenses/reversinglabs-LICENSE.txt",
+      "bytes": 1056,
+      "sha256": "8ac378a5a6716e1aef984c2ea50cbeb28d9a2f0a871846875245f71a02d023fc"
+    },
+    {
+      "path": "sapientia/catalogs/yara/licenses/signature_base-LICENSE.txt",
+      "bytes": 1939,
+      "sha256": "8a959b2413d0c83ca1b3ce9153076c649abf2e4bbfebbb493fb24c2074a1eb8a"
+    }
+  ],
+  "yara": {
+    "file_count": 991,
+    "rule_count": 2285,
+    "public_rule_count": 2276,
+    "sources": [
+      {
+        "id": "signature_base",
+        "repository": "Neo23x0/signature-base",
+        "commit": "94a1c48d7ab499879287ff611dfe7f9c56376030",
+        "license": "DRL-1.1",
+        "license_url": "https://github.com/Neo23x0/signature-base/blob/94a1c48d7ab499879287ff611dfe7f9c56376030/LICENSE",
+        "license_sha256": "8a959b2413d0c83ca1b3ce9153076c649abf2e4bbfebbb493fb24c2074a1eb8a",
+        "included_files": 547,
+        "rule_count": 1760,
+        "public_rule_count": 1751
+      },
+      {
+        "id": "reversinglabs",
+        "repository": "reversinglabs/reversinglabs-yara-rules",
+        "commit": "e0a0be54aa1e11ccfd6854e4f19e9476f328fd84",
+        "license": "MIT",
+        "license_url": "https://github.com/reversinglabs/reversinglabs-yara-rules/blob/e0a0be54aa1e11ccfd6854e4f19e9476f328fd84/LICENSE",
+        "license_sha256": "8ac378a5a6716e1aef984c2ea50cbeb28d9a2f0a871846875245f71a02d023fc",
+        "included_files": 289,
+        "rule_count": 289,
+        "public_rule_count": 289
+      },
+      {
+        "id": "bartblaze",
+        "repository": "bartblaze/Yara-rules",
+        "commit": "5cc871d82361de8a80d387ec8bbd01fe4258b4a9",
+        "license": "MIT",
+        "license_url": "https://github.com/bartblaze/Yara-rules/blob/5cc871d82361de8a80d387ec8bbd01fe4258b4a9/LICENSE",
+        "license_sha256": "a90123cce1ab170abaa97396f6a0b8a8c8d061f1e774f2a7eb2a421925fb5a0e",
+        "included_files": 82,
+        "rule_count": 95,
+        "public_rule_count": 95
+      },
+      {
+        "id": "jpcert",
+        "repository": "JPCERTCC/jpcert-yara",
+        "commit": "7837438e7bcb100bcc7f9d2be09152b19d967c0c",
+        "license": "BSD-3-Clause",
+        "license_url": "https://github.com/JPCERTCC/jpcert-yara/blob/7837438e7bcb100bcc7f9d2be09152b19d967c0c/LICENSE",
+        "license_sha256": "6ef29cc700c03e436ac06e4718cdda5d88885d3cb3337ed06e7e1ceb7483faba",
+        "included_files": 73,
+        "rule_count": 141,
+        "public_rule_count": 141
+      }
+    ]
+  },
+  "capa": {
+    "upstream": "https://github.com/mandiant/capa-rules",
+    "commit": "2af9fbfc1c9b4634dbeb76b5d34fca9389fa7f80",
+    "license": "Apache-2.0",
+    "rule_files": 1042,
+    "archive_sha256": "2b3408c0ef9313683cfe2b7dab6c3fb8c2ac3fa8bb0c95281341d220dfc5e1ca"
+  },
+  "not_bundled": [
+    "installed virtual environments",
+    "external Sigma rule corpus",
+    "ClamAV program/signature database",
+    "CAPE program/signatures/guest OS images",
+    "Speakeasy/FLOSS/capa installed runtimes",
+    "FLIRT databases",
+    "malware samples",
+    "NATS executables/executable archives"
+  ],
+  "operator_import_policy": "Preserve original source/hash and declared metadata. Missing license means unspecified; technical review is not a redistribution grant."
+}

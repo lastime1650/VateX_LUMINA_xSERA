@@ -1,0 +1,4 @@
+# Provision into the independently trusted runtime before installation.
+# No dependency download is performed by the privileged agent installer.
+cryptography==50.0.2
+defusedxml==0.7.1

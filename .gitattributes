@@ -1,0 +1,4 @@
+# Preserve source bytes, catalog provenance and signed agent package inputs.
+* -text
+sapientia/catalogs/** -text
+sapientia/endpoint_agent/** -text

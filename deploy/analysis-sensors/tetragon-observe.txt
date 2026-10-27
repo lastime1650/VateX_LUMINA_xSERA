@@ -1,0 +1,8 @@
+Tetragon is optional and is not installed by xSERA.
+Use the official release's JSON process event export on the exact qualified
+kernel/BSP. Export process_exec/process_exit/process_kprobe records with time,
+node_name and explicit process exec_id/start_time when actually available.
+Forward the resulting JSONL file through tools/forward_analysis_sensor.py.
+No enforcement TracingPolicy is supplied or loaded by this integration.
+Only independently reviewed alert_queries policy_name values alert; ordinary
+process observations remain observations. Measure ring-buffer loss separately.

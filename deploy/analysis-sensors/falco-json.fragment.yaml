@@ -1,0 +1,9 @@
+# Merge manually after qualifying the selected syscall driver and rule set.
+json_output: true
+json_include_output_property: true
+json_include_tags_property: true
+file_output:
+  enabled: true
+  keep_alive: true
+  filename: /var/log/falco/xsera-events.jsonl
+# xSERA reads existing JSON. No enforcement/action hook is configured here.

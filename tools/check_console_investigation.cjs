@@ -1,0 +1,42 @@
+'use strict';
+// Executes the production view's data models without a browser or dependencies.
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
+const source=fs.readFileSync(path.resolve(__dirname,'../sapientia/web/console_investigation.js'),'utf8');
+const escaped=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const registered={};const sandbox={window:{Vatex:{h:escaped,register:(name,view)=>registered[name]=view,session:()=>({name:'synthetic',tenant:'qa',role:'analyst'})}},Date,Number,Set,URLSearchParams,console};
+vm.runInNewContext(source,sandbox,{filename:'console_investigation.js'});
+const ui=sandbox.window.VatexInvestigation,tests=[];
+function check(name,fn){fn();tests.push({name,passed:true});}
+const plain=value=>JSON.parse(JSON.stringify(value));
+const catalog={tactics:[{id:'TA0002',shortname:'execution',name:'Execution',order:2},{id:'TA0001',shortname:'initial-access',name:'Initial Access',order:1}],techniques:[{id:'T1059',name:'Command and Scripting Interpreter',tactics:['TA0002'],platforms:['Windows','Linux']},{id:'T1059.001',name:'PowerShell',tactics:['TA0002'],platforms:['Windows'],is_subtechnique:true},{id:'T1566',name:'Phishing',tactics:['TA0001'],platforms:['Windows']}]};
+const context={severity:'high',threat_score:40,score_definition:'Maximum evidence weight; not probability',generated_at:1791466842,techniques:[{id:'T1059.001',contribution_count:2},{id:'T9999',known:false}]};
+check('server_score_zero_is_measured_not_missing',()=>assert.equal(ui.scoreOf({threat_score:0}),0));
+check('invalid_or_missing_score_is_never_coerced',()=>{for(const threat_score of [undefined,null,'40',NaN,Infinity,-1,101])assert.equal(ui.scoreOf({threat_score}),null);});
+check('complete_server_case_severity_and_score_are_rendered',()=>{const html=ui.header(context);assert.match(html,/data-level="high"/);assert.match(html,/<strong>40<\/strong>/);assert.match(html,/MITRE 기술의 심각도가 아닙니다/);});
+check('server_labels_and_definitions_are_escaped',()=>{const html=ui.header({...context,score_definition:'<img src=x onerror=alert(1)>'});assert(!html.includes('<img'));assert(html.includes('&lt;img'));});
+check('actual_score_definition_object_renders_meaning_not_object',()=>{const html=ui.header({...context,score_definition:{id:'case-evidence-max-v1',formula:'min(100,max(weight))',meaning:'Maximum evidence priority'}});assert(!html.includes('[object Object]'));assert(html.includes('정책 위험 기여도 중 최댓값'));assert(html.includes('중복 근거는 점수를 더하지 않습니다'));});
+check('catalog_tactic_ids_are_joined_and_ordered',()=>{const model=ui.matrixModel(catalog,context);assert.equal(model[0].tactic.id,'TA0001');assert.equal(model[1].items.length,2);});
+check('only_exact_evidence_techniques_are_highlighted',()=>{const items=ui.matrixModel(catalog,context).flatMap(column=>column.items);assert.equal(items.filter(item=>item.mapped).length,1);assert.equal(items.find(item=>item.id==='T1059').mapped,false);assert(!items.some(item=>item.id==='T9999'));});
+check('matrix_search_platform_and_mapped_filters_combine',()=>{const model=ui.matrixModel(catalog,context,{search:'Power',platform:'Windows',mapped:true});assert.deepEqual(plain(model.flatMap(column=>column.items).map(item=>item.id)),['T1059.001']);assert.equal(ui.matrixModel(catalog,context,{platform:'Linux',mapped:true}).flatMap(column=>column.items).length,0);});
+check('pid_alone_cannot_offer_process_response',()=>{assert.equal(ui.targetAction({response_eligible:true,process:{pid:42,guid:'g'}},'terminate_process'),null);assert.equal(ui.targetAction({response_eligible:true,process:{pid:42,start_identity:'linux:boot:9'}},'terminate_process'),null);});
+check('exact_process_instance_is_preserved',()=>{assert.deepEqual(plain(ui.targetAction({response_eligible:true,process:{pid:42,guid:'g',start_identity:'linux:boot:9',name:'untrusted name'}},'terminate_process')),{type:'terminate_process',process_guid:'g',pid:42,start_identity:'linux:boot:9'});});
+check('file_delete_requires_absolute_path_and_sha256',()=>{assert.equal(ui.targetAction({response_eligible:true,file:{path:'relative.txt',sha256:'a'.repeat(64)}},'delete_file'),null);assert.equal(ui.targetAction({response_eligible:true,file:{path:'/var/test.txt',sha256:'short'}},'delete_file'),null);assert.equal(ui.targetAction({response_eligible:true,file:{path:'C:\\Synthetic\\test.txt',sha256:'A'.repeat(64)}},'delete_file').path,'C:\\Synthetic\\test.txt');});
+check('unproven_or_foreign_agent_origin_is_not_actionable',()=>{const process={pid:42,guid:'g',start_identity:'win:9'};for(const response_eligible of [undefined,false,null])assert.equal(ui.targetAction({response_eligible,process},'terminate_process'),null);assert.equal(ui.targetAction({response_eligible:true,verified_agent_id:'a',process},'terminate_process',{agent:{id:'b'}}),null);});
+check('restore_requires_verified_quarantine_receipt',()=>{const file={path:'C:\\Synthetic\\test.txt',sha256:'a'.repeat(64)},event={response_eligible:true,verified_agent_id:'a',file};assert.equal(ui.targetAction(event,'restore_file',{agent:{id:'a'},commands:[]}),null);const action=ui.targetAction(event,'restore_file',{agent:{id:'a'},commands:[{agent_id:'a',action:{type:'quarantine_file',...file},result:{data:{quarantine_id:'b'.repeat(32)}}}]});assert.equal(action.quarantine_id,'b'.repeat(32));});
+check('host_response_shows_management_identity',()=>{const action={type:'isolate_host',management_allowlist_digest:'a'.repeat(64)};const rows=plain(ui.actionTargetRows(action,{host:'qa-host'}));assert(rows.some(row=>row[1]==='qa-host'));assert(rows.some(row=>row[1]==='a'.repeat(64)));assert(!rows.some(row=>row[0].includes('경로')));});
+check('simulated_or_unknown_execution_cannot_render_success',()=>{for(const executed of [false,null,undefined])assert.equal(ui.commandOutcome({state:'succeeded',result:{success:true,executed}}).state,'unknown');assert.equal(ui.commandOutcome({state:'succeeded',result:{success:true,executed:true}}).state,'succeeded');});
+check('read_only_receipt_can_show_verified_investigation_without_os_effect',()=>assert.equal(ui.commandOutcome({state:'succeeded',action:{type:'inspect_file'},result:{success:true,executed:false}}).label,'조사 / 증거 수집 완료'));
+check('queued_is_pending_not_success',()=>assert.equal(ui.commandOutcome({state:'queued',result:null}).label,'전송 대기'));
+check('template_review_displays_actual_conditions_and_timing',()=>{const html=ui.policyPreviewHTML({entity_field:'host',window:300,interval:30,cooldown:300,steps:[{name:'Follow-up',min_count:1,within_seconds:120,filters:[{field:'index',op:'eq',value:'_selected_index'},{field:'raw.command_line',op:'regex',value:'(?i) -enc '}]}]});assert.match(html,/120초 이내/);assert.match(html,/raw.command_line/);assert.match(html,/regex/);assert.match(html,/가져오기에서 선택할 정확한 인덱스/);assert(!html.includes('_selected_index'));});
+check('template_list_values_are_human_readable_and_escaped',()=>{const html=ui.policyPreviewHTML({steps:[{name:'Source',min_count:1,filters:[{field:'raw.kind',op:'typed_in',value:'["<script>","network"]'}]}]});assert(html.includes('문자: &lt;script&gt; · 문자: network'));assert(!html.includes('<script>'));});
+check('template_screen_registration_and_no_inline_script_style',()=>{assert.equal(typeof registered.templates.render,'function');assert(!/\bstyle=|\bonclick=|eval\(/.test(source));});
+(async()=>{
+  const host={innerHTML:'',isConnected:true,addEventListener(){},removeEventListener(){}};
+  const scope={alive:()=>true,get:async()=>({agents:[],events:[],commands:[{id:'first-command',host:'synthetic-host',requester:'analyst',state:'queued',action:{type:'terminate_process',pid:42,process_guid:'g',start_identity:'linux:boot:9'}}],ttl_seconds:300})};
+  const cleanup=await ui.mountResponse(host,{scope,incident:{id:'synthetic-case'}});
+  check('first_queued_command_has_real_refresh_and_cancel_controls',()=>{assert.match(host.innerHTML,/data-iv="response-detail" data-id="first-command"/);assert.match(host.innerHTML,/data-iv="response-cancel" data-id="first-command"/);});
+  cleanup();
+  const result={passed:true,checks:tests.length,tests};
+  if(process.argv[2])fs.writeFileSync(path.resolve(process.argv[2]),JSON.stringify(result,null,2));
+  console.log(`${tests.length} passed`);
+})().catch(err=>{console.error(err);process.exitCode=1;});

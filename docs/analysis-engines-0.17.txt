@@ -1,0 +1,168 @@
+xSERA 0.17.0 — optional CPU file-analysis engines
+
+Scope
+Completed, hash-checked artifacts collected by the endpoint investigation flow
+can be analyzed with fixed server-side adapters for capa, FLOSS, ClamAV,
+Speakeasy, and a local CAPE service. The API does not accept executable paths,
+commands, provider URLs, arbitrary Python, or raw samples.
+
+The production data directory is never needed for installation verification.
+Use a fresh explicitly owned Store and inert test files. Do not execute malware
+on the appliance or on endpoint hosts.
+
+Installation and runtime separation
+Install optional packages in a separate Python 3.12 environment compatible with
+the server interpreter. This avoids transitive dependency conflicts with the
+web/ML environment. On Windows set PYTHONUTF8=1 while installing dependencies.
+Official PyPI packages exercised during development:
+  flare-capa==9.4.0
+  flare-floss==3.1.1
+  speakeasy-emulator==1.5.11
+The optional extras are binary-analysis and emulation-analysis; installing all
+extras together is not a guarantee of transitive compatibility on every system.
+
+Set XSERA_ANALYSIS_SITE_PACKAGES to that environment's absolute site-packages
+directory before starting the server. This trusted local configuration is
+visible only to the isolated child. It is never an API argument. Do not point it
+to an untrusted or user-writable directory. The actual direct base interpreter
+is started on Windows, avoiding the virtual-environment launcher orphan issue.
+
+No host binary is executed by capa/FLOSS. A private copied sample is analyzed in
+one bounded child. Windows Job containment limits memory/CPU/process count and
+kills the job on close; the adapter fails unavailable if required containment
+cannot be applied. Unix uses a process group and child resource limits.
+This containment is a resource boundary, not a complete hostile-code sandbox.
+
+capa built-in rules
+1042 unchanged text rule files are distributed with the upstream Apache-2.0
+LICENSE.txt, per-file SHA256, original archive hash and fixed commit:
+  https://github.com/mandiant/capa-rules
+  2af9fbfc1c9b4634dbeb76b5d34fca9389fa7f80 (v9.4.0)
+  manifest SHA256 139faa3d3230f50490dddb3171d903603b7a76adfd5f3479a4a91faa54044e5d
+The default pack rejects modified, missing, additional, or linked rule objects.
+No upstream test binaries, malware, Python modules, or academic-only research
+implementations are copied. tools/import_capa_rules.py reproduces the text import
+into a new reviewed destination; it refuses overwriting an existing pack.
+Trusted operators may set XSERA_CAPA_RULES to a separately reviewed local pack.
+The default adapter disables optional FLIRT library recognition because the
+flare-capa wheel does not include that separate database. Output explicitly
+records library_recognition=false; library code may contribute extra matches.
+
+FLOSS output
+Static, stack, tight, and decoded strings come from the installed real FLOSS
+JSON implementation. Up to 256 strings are returned, each at most 1024
+characters. Total counts and truncation remain visible. Strings are untrusted
+observations, not a maliciousness score. Installed signature resources are
+hashed as part of the engine resource identity.
+
+ClamAV
+Run a separately maintained local clamd daemon bound to loopback and set
+XSERA_CLAMAV_PORT. The adapter sends bytes with the real clamd INSTREAM protocol,
+never a path for the daemon to open. VERSION supplies the observed engine/DB
+serial metadata; the digest of that metadata is not an attestation of every
+database byte and is labeled accordingly. ClamAV runs are not cached. Maintain
+official databases with FreshClam and configure daemon limits for the desired
+file sizes. A signature match is suspicious; OK remains unknown, never clean.
+No daemon is installed or enabled implicitly by the application.
+
+Speakeasy
+Set XSERA_ENABLE_EMULATION=1 only after provisioning the separate runtime.
+Modeled Windows API execution occurs inside the bounded worker, with no API
+provided volumes, host mounts, native execution, or custom hooks. Unsupported
+emulated paths are retained as emulation_errors and coverage_complete=false.
+API events are bounded and remain observations. This is not a complete Windows
+VM, an endpoint prevention engine, or proof that a non-matching file is safe.
+
+CAPE
+Only an explicit HTTP loopback origin with a port is accepted, such as
+http://127.0.0.1:8000. Hostnames, remote addresses, HTTPS origins, credentials in
+URLs, query strings, fragments, and non-root URL paths are rejected.
+Configure XSERA_CAPE_URL, XSERA_CAPE_VERSION, XSERA_CAPE_RULE_DIGEST (a reviewed
+local service rules/config manifest SHA256), and optionally XSERA_CAPE_TOKEN.
+These are trusted local operator pins; remote rule contents are not attested.
+If the health API returns a version, it must match the configured version.
+
+An administrator requests exact artifact/hash/destination upload consent. A
+different currently authorized administrator reviews it. Upload consent lasts
+one hour and permits one upload attempt. The claim is audited before sending;
+an uncertain network failure never causes silent re-upload. Obtain fresh peer
+consent if a second upload is desired. An already consumed exact task can be
+polled after the upload window, while both reviewers, Case, original telemetry,
+artifact bytes and local service configuration remain authorized. No consent
+permits a different file, hash, service, or task.
+
+The fixed CAPE v2 endpoints used are cuckoo/status, tasks/create/file,
+tasks/view/{task}, and tasks/get/report/{task}/json. Reports are accepted only
+when both task ID and target file SHA256 match. Accepted upload state is pending,
+not successful analysis. Polling is explicit. API/behavior observations remain
+unknown rather than a calibrated malware probability. Provision isolated guest
+VMs and guest networking separately; no guest VM is created by this adapter.
+
+Automatic and manual execution
+The runtime automatically discovers only completed expressly requested
+process_executable collections. Default automatic engines are capa and FLOSS.
+XSERA_ANALYSIS_AUTO_ENGINES may contain capa,floss or be empty to disable them.
+CAPE and Speakeasy never run automatically. One job is processed per worker turn,
+with a frozen engine version/resource/config digest, 20-second wall budget and
+shutdown cancellation. Missing engines become unavailable terminal jobs; after
+provisioning an engine, rerun manually. Failed/changed-pin/interrupted jobs do
+not spin forever. Status probes have a bounded 30-second cache; an idle tick
+with no new artifacts performs no subprocess probes.
+
+Manual scans allow up to 120 seconds. Samples are limited to 32 MiB. Tool output
+is bounded to 2 MiB and summaries are smaller. Timeouts, unsupported inputs,
+unavailable dependencies, partial modeled paths, pending providers and errors
+are represented explicitly; no placeholder result is reported as success.
+
+Cache and evidence lifecycle
+Only completed capa/FLOSS/Speakeasy summaries are cached. The key includes
+artifact SHA256, engine ID/version, resource hash and configuration digest.
+Cache scope is the tenant; maximum 128 entries per tenant, age seven days.
+Case/source/current user scope and actual retained bytes are rechecked even
+when reusing a cached computation. Historical run/approval/audit records are
+not removed by the cache cleanup. Failed/unavailable/timeout runs are uncached.
+
+Signals and Case integration
+All engine observations preserve exact original event IDs, Case, artifact ID,
+SHA256, resource/config pins and immutable run reference. capa/FLOSS/Speakeasy/
+CAPE observations are informational unless an explicitly reviewed composite
+policy combines them with corroborating behavior. Only ClamAV signature matches
+emit a suspicious high-severity observation. Repeated scans do not turn one file
+into independent evidence: the artifact hash is a shared dependency group.
+No engine output grants endpoint response authority. The finding parent adapter
+revalidates the saved signal/run, current author, current whole Case scope,
+collection command, retained file hash, source admission, Case membership and
+provider consent when a new composite is considered.
+
+API
+GET /api/analysis-engines/status
+GET /api/analysis-engines/artifacts?incident_id=...
+GET /api/analysis-engines/runs?incident_id=...
+GET /api/analysis-engines/runs/{id}
+POST /api/analysis-engines/runs
+  {artifact_id,engine,emit_signal?:true,approval_id?:...}
+POST /api/analysis-engines/runs/{id}/poll {}
+GET /api/analysis-engines/approvals?incident_id=...
+POST /api/analysis-engines/approvals {artifact_id,engine:"cape",reason}
+POST /api/analysis-engines/approvals/{id}/review {approve,reason}
+
+License boundaries and references
+capa code/rules Apache-2.0: https://github.com/mandiant/capa
+FLOSS Apache-2.0: https://github.com/mandiant/flare-floss
+Speakeasy MIT: https://github.com/mandiant/speakeasy
+ClamAV GPLv2: https://docs.clamav.net/manual/Development/libclamav.html
+CAPE GPLv3: https://github.com/kevoreilly/CAPEv2
+Engine code, rule packs, signature databases, emulator dependencies, guest OS
+licenses and third-party packages have distinct terms. In particular metadata
+alone is not a complete dependency/license audit. These integrations do not
+claim that process/API separation eliminates distribution obligations. Preserve
+the actual notices and perform a distribution-specific review before shipping
+optional runtimes or external databases. No academic-only implementation is
+bundled as a commercial engine.
+
+Development proof boundaries
+capa 9.4.0, FLOSS 3.1.1 and Speakeasy 1.5.11 were exercised on copied benign Python
+runtime bytes, never executed as the submitted sample. Their capability, string
+and emulated API results remained unknown. ClamAV/CAPE transport tests use clearly
+labeled local protocol fixtures; that is not evidence that actual daemons/guest
+VMs are installed. On an unprovisioned system their real status is unavailable.

@@ -1,0 +1,42 @@
+xSERA 0.20 research-path performance and compatibility
+
+The optimization does not cache permission decisions, admission receipts,
+source state, model reviews, current visibility, original availability, or
+inference predictions. Every publication and parent inspection retains the
+existing fresh authority and immutable original checks. A reserved transaction
+may reuse its bounded original facts under the existing Store/actor/DB contract;
+each hit checks current principal, receipts, source registry and source owners.
+
+Internal originals_many reads up to 1056 exact references in one analytics
+query. The public originals/signal interface remains limited to 32. Only the
+existing analytics 2 MiB result ceiling triggers a retry in 32-reference chunks;
+authority errors and read failures are never treated as a size fallback.
+
+Deterministic projections, 64-dimensional features, semantic metadata and exact
+window distribution arithmetic use a process-local LRU with at most 4096 entries
+and 16 MiB of serialized result values. Actual input bytes and implementation
+namespaces determine keys. Returned JSON values are independent copies. This
+cache neither updates a normal baseline nor grants authority to a cached fact.
+Source definition parsing is deduplicated only inside one fresh authority call.
+
+Defensive copying of admitted JSON facts uses a JSON value copy. Unexpected
+internal tuples, non-string keys, custom scalar types, aliases or cycles fall
+back to deepcopy, preserving internal fixture semantics and caller isolation.
+
+One exact preserved 0.19 v2 pair is compatible with these pure optimizations:
+  feature d64bd08de362efad0ab6e8a5aa4b68cba7be7d0287cda5798b0a6c3d661189d3
+  fusion  4916a91f05d0161cbddcf6cfb14eec4a254177d3483365057fd61f0e88797647
+Its saved weights, model snapshot, independent review, run body, manifest and
+contract tags are not rewritten. Exact baseline child-process tests compare
+144 feature vectors, frozen calibration and complete gate outputs over 96
+historical originals including ordering/context counterexamples. A real CPU
+0.19 Store with 48-original ancestry replays after upgrade, preserves the same
+common ML ID and produces a new automatic run retaining the old contract tags.
+Mixed old/new or unknown contract pairs require retraining and independent
+review. The v1 graph, feature vector, worker and fusion source bytes are intact.
+
+Small replay profiles measure a narrow warm workload and cannot establish an
+EPS or latency SLA. Final sustained-load evidence must report actual committed
+server clocks, complete atomic and CPU coverage, pending queues, source digest
+at start/end, and both failed and passing predeclared latency criteria. CPU-only
+synthetic tests do not establish field accuracy or actual host-blocking behavior.

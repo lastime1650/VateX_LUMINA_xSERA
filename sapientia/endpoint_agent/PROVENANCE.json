@@ -1,0 +1,119 @@
+{
+  "source": "User-provided XDR_V2/Agent; source only; no original data/config/credentials or executable copied",
+  "license": "Apache-2.0; direct project-owner declaration dated 2026-10-16 covers the supplied original AEGIS XDR_V2 Agent code and xSERA modifications. Independently licensed third-party components and the separate Python runtime retain their notices.",
+  "process_artifact_patch": {
+    "revision": "process-disk-image-2026-10-15.1",
+    "backend_compatibility": "0.16.0",
+    "changed_runtime_files": [
+      "Agent/process_artifact.py",
+      "Agent/operations.py",
+      "Agent/response.py",
+      "Agent/cli.py",
+      "Agent/core.py"
+    ],
+    "scope": "Explicit local opt-in and exact executable allowlist; live GUID/PID/start/path/hash revalidation; stable disk image only; 32MiB cap; authenticated chunk transport. No process-memory dump, sample execution or new blocking action.",
+    "native_fleet_qualified": false
+  },
+  "safety_patch": {
+    "revision": "isolation-2026-10-13.1",
+    "backend_compatibility": "0.10.0",
+    "changed_runtime_files": [
+      "Agent/operations.py",
+      "Agent/response.py",
+      "Agent/firewall_guard.py"
+    ],
+    "scope": "Direction-bound management traffic; non-loopback IPv6 management isolation is rejected until qualified; exact legacy release remains available."
+  },
+  "detection_patch": {
+    "revision": "detection-continuity-2026-10-13.1",
+    "scope": "Independent capture/evaluation workers, durable event/rule continuation, native-source retry fidelity, fair channel budgets, PowerShell observations, startup inventory and explicit command-line fidelity. Optional read-only memory layout and Linux guarded-workload approved-code controls have bounded scope; Windows own-process memory layout is native-qualified, Linux new guarded-workload/memory qualification is incomplete after SSH timeout.",
+    "requires_backend_features": [
+      "allowlisted PowerShell 4103/4104 unbound observation and bounded fidelity",
+      "canonical startup process and network observation actions",
+      "signed allow_execution local policy action"
+    ],
+    "changed_runtime_files": [
+      "Agent/core.py",
+      "Agent/defense.py",
+      "Agent/Windows/collector.py",
+      "Agent/Linux/collector.py",
+      "Agent/cli.py",
+      "Agent/kernel_prevention.py",
+      "Agent/windows_app_control.py",
+      "Agent/memory_observability.py",
+      "configure.py"
+    ],
+    "zero_day_classifier_claimed": false,
+    "guarded_workload_native_qualified": false,
+    "backend_compatibility": "0.11.0",
+    "windows_memory_native_qualified": true,
+    "linux_new_features_native_qualified": false
+  },
+  "native_delivery_patch": {
+    "revision": "native-backlog-shutdown-2026-10-13.1",
+    "agent_version": "lumina-xsera-agent/0.11",
+    "scope": "Two-pass bounded cached Event Log scheduling borrows unused channel budget after every channel receives its fair quota. Confirmed selected-record backlog is degraded; RecordID span is explicitly not an event count. Quiesced workers precede a bounded 15..30 second transport-only shutdown drain; only validated durable ACKs settle local rows, and late or failed ACKs retain the durable tail. Final local status is sampled after worker joins and drain.",
+    "policy_or_native_response_during_shutdown_drain": false,
+    "windows_native_qa2_qualification": "qualification requires external source-hash-bound native receipt; no embedded efficacy certificate",
+    "source_span_measurement_is_selected_event_count": false,
+    "sysmon_self_observation_contribution_measured": false,
+    "new_WinEvtAPI_or_OS_logging_policy": false,
+    "zero_day_classifier_claimed": false
+  },
+  "files": [
+    {
+      "path": "Agent/__init__.py",
+      "original_sha256": "6bb26e8c79da5add6d41255280a1fe4ce6cc9e06f7a72c77f8c96b1581b9a17c"
+    },
+    {
+      "path": "Agent/core.py",
+      "original_sha256": "2ef01ade774a6051d1070776ccf252ef54455094bc7a8b5c84399d32e9bf3fa7"
+    },
+    {
+      "path": "Agent/cli.py",
+      "original_sha256": "a83f7be271015ea64fce2c2cf5d6b46e5174f3bf9460461a0796651409e8932c"
+    },
+    {
+      "path": "Agent/Windows/__init__.py",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Agent/Windows/main.py",
+      "original_sha256": "b687cbf9c8e3a3367502deea335163ca7fac4898462f414486bb2f2298eb48f5"
+    },
+    {
+      "path": "Agent/Windows/collector.py",
+      "original_sha256": "a822440cdae56670be958ea701487d835f8a81a28fbc09fafa6cb21342a0fccd"
+    },
+    {
+      "path": "Agent/Windows/service.py",
+      "original_sha256": "1d979c53c90964e90f1439ed18b79c923c2d2fd98ffb8ace8d2e6701aea7b499"
+    },
+    {
+      "path": "Agent/Windows/tray.py",
+      "original_sha256": "072229c47ed83d9078f4e184582c8838e789d6c5b0d4d5a52bf7f7a8e8a5e2d7"
+    },
+    {
+      "path": "Agent/Linux/__init__.py",
+      "original_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Agent/Linux/main.py",
+      "original_sha256": "5182934663fc55406d1ed07b3c0b0beabf38988ba6a3c45b3f3c37e0d54cc3dd"
+    },
+    {
+      "path": "Agent/Linux/collector.py",
+      "original_sha256": "61229069c5dc4f15bb7532d6e4df852a15d4d3d4cd34a5f44b30068a6e9991af"
+    }
+  ],
+  "owner_redistribution_declaration": {
+    "declared_on": "2026-10-16",
+    "authority": "Direct human project-owner statement in this task",
+    "scope": "All supplied original AEGIS XDR_V2/Agent source represented by the immutable original_sha256 entries below, including the agent code, may be publicly redistributed under Apache-2.0",
+    "spdx_license_identifier": "Apache-2.0",
+    "independent_legal_judgement": false,
+    "historical_provenance_sha256": "73776e08d33f7d49e2c515bb80af01ad9a673feab2d9df2b31c4e340736f3162",
+    "historical_license_observation": "No top-level redistribution license found. Supplied source reuse for this local user project; no third-party redistribution right inferred. Python runtime not bundled.",
+    "original_source_hashes_preserved": true
+  }
+}

@@ -1,0 +1,54 @@
+xSERA 0.18 — 외부 Sigma 규칙을 기존 native JSON 탐지로 연결
+
+외부 규칙은 별도 실시간 Sigma 엔진에서 실행하지 않는다. pySigma 2.0.1로
+타입 AST를 해석한 후 xSERA native condition_tree v1으로 변환한다. OR/NOT와
+명시적 null/키 존재, 숫자와 Boolean의 차이를 보존한다. 정규식 실행은
+DuckDB RE2이며 Python eval/사용자 SQL/외부 프로세스 실행은 없다.
+
+흐름: JSON/YAML 원문 등록 → convert → fixture validate → 다른 담당자 review
+→ activate. 활성화는 기존 intelligence atomic 정책과 같은 버전·승인 해시
+형식으로 저장한다. 기존 atomic/composite 및 Case 경로에서 실제 평가한다.
+source_id/source_version/index를 조건에 포함하며 현재 원천 등록·전체 ACL과
+소유자/편집자/독립 검토자의 권한을 다시 검사한다. 원천 변경·취소와 import
+편집/retire는 이전 정책의 효력을 없앤다. 관리 정책을 일반 JSON 정책 API로
+직접 편집하거나 승인해 이 절차를 우회할 수 없다.
+
+POST /api/content/sigma/imports, PUT /{id} 입력:
+expected_revision, name, format(json|yaml), source_text, indexes,
+field_mapping, logsource_mapping, source_contracts([{source_id,version}]),
+severity, case_adapter(기존 Case adapter 또는 null), fixtures.
+fixtures는 [{name,source_id,event,expect}]이며 event는 명시적 event_id,
+event_time,index를 포함하는 normalized envelope이다. 양성·음성 각각 1개
+이상, 전체 2..32개를 요구한다. 서버는 등록된 원천으로 projection을 만들고
+운영 경로와 같은 native evaluator로 시험한다. fixture를 운영 원본으로
+수집하거나 신호/Case로 발행하지 않는다.
+
+POST /{id}/convert, /validate, /activate: {expected_revision}.
+POST /{id}/review: {expected_revision,approve,reason}.
+POST /{id}/retire: {expected_revision,reason}.
+GET /api/content/sigma/imports/status, 목록, /{id}는 viewer도 조회 가능하다.
+등록 원천 선택은 GET /api/v2/sources의 실제 active id/version을 사용한다.
+편집/변환/검증/승인은 analyst 또는 admin 권한을 요구하며, 검토자는
+원문 소유자 및 마지막 편집자와 달라야 한다. activate는 통과한 정확한
+검증·독립 승인·소스 계약을 하나의 트랜잭션에서 native 정책에 연결한다.
+
+원문 UTF-8 64 KiB, 전체 요청 512 KiB, 원천/인덱스 각각 최대 8개,
+native AST 512 노드/20단계, 정책 32 KiB, 정규식 512문자 제한이다.
+임의 URL 다운로드·파일 경로 입력, YAML alias/anchor/merge/custom tags,
+중복 키·여러 문서, 미지원 수정자·집계·correlation 문서는 거절한다.
+문자열이 아닌 envelope 필드를 문자열/Boolean으로 강제 변환하지 않는다.
+지원되는 Sigma 범위는 명시적 scalar JSON 프로필이며 범용 backend가 아니다.
+
+원문 원본·SHA256, immutable import revision, 필드/로그 원천 매핑,
+등록 원천 정의 해시, pySigma 버전 및 변환기 SHA, native evaluator 계약,
+변환 canonical hash/IR, fixture 결과와 독립 검토 이력을 보존한다.
+매핑을 수정하면 새 개정이 생기며 이전 검증·승인은 재사용되지 않는다.
+활성화 이후 실시간 평가는 pySigma/PyYAML을 필요로 하지 않는다.
+변환기 제거가 승인된 native 정책의 실행을 중단시키지 않는다. 새로운
+변환/검증/승인/활성화에는 해당 변환 환경 및 고정 버전 확인이 필요하다.
+
+의존성: sigma-analysis 선택 의존성(pysigma==2.0.1); YAML은 그 환경의
+PyYAML SafeLoader를 이용한다. 선택 의존성이 없으면 변환은 unavailable로
+보고하며 임의 대체 변환을 수행하지 않는다. 수입 원문의 license 필드는
+원문과 함께 보존되지만 외부 규칙의 재배포 권한을 자동 부여하지 않는다.
+실제 장비 차단/자동 대응 승인, 악성 확률 또는 탐지 정확도를 보장하지 않는다.

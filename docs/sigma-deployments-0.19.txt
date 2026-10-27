@@ -1,0 +1,124 @@
+xSERA 0.19 Sigma: separate working revisions and reviewed native deployments
+
+The import editor creates a working revision. Saving, reconverting, failed
+fixtures, or rejection invalidate only that working revision. The previously
+approved deployment continues to execute its immutable source/mapping/native
+IR/fixture/reviewer snapshot. Deployment atomically replaces the native policy,
+its exact-version binding, and the active deployment snapshot in one reserved
+transaction. A failed write rolls back all three; there is no disabled interval.
+
+Rollback selects a previous approved deployment and creates a new native policy
+version. It preserves the pending working draft. Current source version, source
+owner scope, import owner/editor scope, independent reviewer scope, original
+source SHA256, fixture result, native evaluator contract, and exact parent pins
+are checked again. Retired deployments cannot use rollback as a reactivation
+shortcut. A new reviewed working revision is needed after source or parent
+changes. Rollback and active execution use reviewed native JSON without pySigma;
+conversion/validation/new approval require the pinned optional parser runtime.
+
+An additive sigma_imports v2 migration preserves the existing v1 tables and
+checksums. Existing active 0.18 imports are copied into deployment custody without
+changing their native policy, approval, original source, or validation records.
+
+HTTP contract (existing authentication/CSRF/current tenant/index roles apply):
+  GET /api/content/sigma/imports or /{id}
+    Adds active_deployment, deployments, working_draft_separate. The existing
+    revision/state/payload fields describe the working revision.
+  POST /{id}/rollback
+    {expected_revision, expected_policy_version, target_policy_version, reason}
+    Owner or administrator only; exact optimistic pointers required.
+  POST /{id}/mapping-suggestions {expected_revision}
+    Returns changes, observed_schema, sample_count, source_contract_digest,
+    proposal_digest, explicit_approval_required:true, automatic_apply:false.
+    Only retained receipts belonging to the declared active source versions and
+    current complete scope are inspected (up to 32 samples, 256 scalar paths).
+    Values are not returned by this schema endpoint. Ambiguous/unobserved names
+    remain manual. No guessed mapping is silently saved.
+  POST /{id}/apply-mapping
+    {expected_revision, proposal_digest, approve:true}
+    Rechecks the observed proposal, saves a new draft, records who explicitly
+    approved its mapping, and preserves the current active deployment.
+  POST /{id}/fixture-candidates {expected_revision}
+    Requires the current conversion. Candidate source-bound fixtures and bounded
+    mutations are evaluated with the actual native predicate/correlation code.
+    Returns candidates only if both a positive and negative result were proved;
+    otherwise manual_required. It does not admit originals, issue signals, save
+    fixtures, approve a policy, or create a Case. The user reviews the candidates
+    in a new working revision, then converts/validates/obtains peer review again.
+
+Supported correlation subset
+
+The original JSON/YAML contains one Sigma correlation object. Its rules refer to
+the original unique name or id of already active imported atomic rules. Every
+parent index and source version must be explicitly declared. Ambiguous, hidden,
+revoked, changed, or unapproved parents fail conversion. A parent working draft
+does not change the active parent. Deploying a changed parent invalidates the
+old correlation pin, requiring a new conversion/test/review.
+
+Supported types: event_count, value_count, temporal, temporal_ordered.
+Count comparisons are only positive gte (1..32) or gt (1..31). event_count counts
+unique original IDs across matched base rules. value_count counts distinct typed
+non-null scalar values; numeric 1 and 1.0 are equal, booleans are distinct.
+Temporal requires all 2..8 referenced rules. temporal_ordered additionally
+requires strictly increasing reported event timestamps; tied clocks do not prove
+an order. Missing/null/structured grouping fields cannot create an association.
+group-by supports 1..4 exact scalar fields, including explicit per-rule aliases.
+Timespan supports integer s/m/h/d, within 1..86400 seconds. Windows slide
+inclusively over reported event time among retained recently published parents.
+The engine does not certify source clock synchronization or upstream delivery.
+
+Base rules are independently deployed policies and stay enabled. Explicit
+generate:false, which requests suppressing those base conversions, is rejected;
+omitting generate retains these existing approvals. This is an import into
+existing reviewed policies, not a replacement global Sigma backend.
+
+Unsupported conditions are rejected, never weakened: absence or upper-bound
+counting (lt/lte/eq/neq), chained correlations, extended temporal expressions,
+metric aggregates (sum/average/median/percentile), legacy detection-pipe
+aggregation, multi-document bundles, unknown fields/modifiers, and implicit
+source/mapping assumptions. This is not full Sigma standard support.
+
+Native execution
+
+Conversion uses the actual pySigma correlation parser and creates an approved
+native composite JSON policy. Exact parent revision/digests and an evaluator
+implementation contract are pinned. The existing intelligence scheduler invokes
+the bounded native evaluator, rechecks current parent/source/original authority,
+publishes a composite signal, and invokes the existing Case adapter. Runtime
+does not depend on pySigma. Server-derived Sigma provenance identifies the
+import, source revision/hash, native definition, and fixture validation digest.
+Caller-supplied provenance, false measurements, or stale policy versions fail.
+
+At most 256 recently published atomic parent signals are inspected per policy;
+each matching window retains at most 32 parent signals and 32 originals. An
+overflow records coverage_exceeded/complete:false, rather than normal/no-match.
+Earlier bounded valid windows can still have legitimate detections. A durable
+cursor, deterministic signal IDs, cancellation/deadline checks, and skipping
+already emitted IDs allow retry without duplicate Case contributions. General
+composites keep their original parent bound. Correlation scheduling updates the
+shared scheduler timestamp, so idle correlation policies cannot monopolize it.
+
+Console
+
+The native rule workspace shows active deployment and working draft separately,
+mapping proposal approval, actual positive/negative fixture candidates, exact
+review/deployment history, atomic replacement, and reviewed rollback. The editor
+provides examples for all four supported correlation types and states limits.
+The research run view links run -> published/derived signal -> Case. A signal
+deep link displays complete ancestry in 32-original pages, including the long
+evidence manifest, rather than treating a short summary as the entire sequence.
+New GUI training explicitly selects research gate v2; prior models are preserved.
+
+Primary references inspected during implementation:
+  https://sigmahq.io/sigma-specification/specification/sigma-correlation-rules-specification.html
+  https://github.com/SigmaHQ/sigma-specification/blob/main/specification/sigma-correlation-rules-specification.md
+  https://sigmahq.io/docs/meta/correlations.html
+  https://github.com/SigmaHQ/pySigma
+
+Tests use disposable synthetic stores and current source contracts. Four actual
+pySigma conversions execute through native signals and Case creation. A larger
+10-parent count preserves every parent/original. Negative cases cover unsupported
+operators, hidden references, stale/spoofed publication, approval bypass, rollback
+write faults, source revocation, schema authority, and bounded pressure fixtures.
+Synthetic regression results are not field detection accuracy or throughput.
+No host isolation, native binary execution, or production data access is added.

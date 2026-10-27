@@ -1,0 +1,150 @@
+xSERA 저장 볼륨 기반 로그 보존 — 2026-10-13
+기능 수정 / 회귀·E2E·운영 DB 정리 미실시
+
+1. 보존 의미와 기본값
+
+로그는 시간이나 누적 건수 때문에 만료되지 않는다. 대신 운영자가 지정한 저장
+볼륨의 최소 여유 공간을 지키기 위해 비보호 원본 로그를 자동 정리한다.
+20%는 로그 폴더가 디스크의 20%까지만 사용한다는 뜻이 아니라, data 경로가 있는
+볼륨의 최소 여유 공간 비율이다. 시스템·다른 프로그램의 파일도 사용률에 포함된다.
+기본 min_free_percent=20이면 볼륨 사용률 80%에서 시작한다. 기본 hysteresis=5로
+사용률 75%(여유 25%)까지 정리해 반복 시작/중단을 줄인다. 작은 볼륨에서는 기존
+Settings.min_free_bytes(기본 1 GiB)가 더 크면 그 절대 reserve를 우선한다.
+
+capacity_cleanup_enabled: true
+min_free_percent: 20
+cleanup_hysteresis_percent: 5
+capacity_check_seconds: 60
+cleanup_batch_rows: 5000
+protect_case_evidence: true
+warning_free_percent: 25 (기존 경보 설정은 유지)
+critical_free_percent: 5
+
+cleanup_batch_rows는 한 차례의 처리 단위다. 총 저장 건수·정리 가능한 총 건수에
+상한을 두지 않는다. 서버 received, tenant, event_id 순의 cursor를 사용하며
+장비가 보낸 event_time으로 삭제 순서를 바꾸지 않는다. 정리 cycle 시작 이후
+신규 수신된 로그는 해당 cycle 후보에서 제외한다.
+
+2. 대상과 보호
+
+대상: events_all의 검색 원본(DuckDB hot + 검증된 Parquet tier), ingest_quarantine
+원본 payload. 정리 완료 시 같은 원본의 receipt/source proof/projection을 기존
+retention 엔진으로 함께 retire한다. 나중에 동일 event_id를 재사용하면 원래와
+같은 중복 방지를 보장할 수 없으므로 collector는 안정적·고유한 ID를 사용한다.
+
+제외: incidents, risk_contributions, Case 메모·작업·피드백·북마크 기록, 감사,
+대응/효과/플레이북·분석 결과·source 상태 이력. 인덱싱 대기열은 삭제하지 않는다.
+tenant hold, index hold, 만료 전의 explicit evidence hold는 항상 보호한다.
+protect_case_evidence=true이면 Case risk contribution의 event_ids와 bookmark에
+연결된 원본도 Case 상태·나이와 무관하게 보호한다. 이를 false로 바꾸는 관리자는
+Case 기록은 남지만 연결된 원본은 용량 정리로 사라질 수 있음을 알아야 한다.
+기존 Case 증거는 migration v2에서 참조 표에 backfill하고, 이후 INSERT/UPDATE/
+DELETE trigger가 동일 SQLite transaction에서 참조를 갱신한다.
+
+3. 스케줄·신규 수집·조회
+
+Runtime.start가 sapientia-capacity-retention 전용 thread를 시작한다. 공유 탐지
+scheduler에는 공간 관측/상태 경보만 둔다. 여유 공간이 부족한 수집 요청과 관리
+정책 변경은 Event로 worker를 깨운다. 활성 정리는 batch 사이에 0.25초 쉬며,
+평상시에는 capacity_check_seconds 간격으로 관측한다. shutdown은 worker를
+깨워 종료·join하고, 종료되지 않으면 DB를 강제로 닫지 않는다.
+
+신규 수집은 max(min_free_bytes, 볼륨 총량 × min_free_percent/100)에 payload
+예상 쓰기 공간을 더해 admission 전에 검사한다. 부족하면 기존 CapacityError
+503/Retry-After 경로로 거절하고 stable ID 재시도를 요구한다. 수집 transaction의
+receipt/proof/checkpoint가 rollback되어 미수락 로그를 수락한 것처럼 표시하지 않는다.
+모든 기록이 보호 대상이거나 시스템의 다른 파일이 공간을 채웠다면 보호 해제·
+외부 보관·저장소 확장 없이 여유 공간 목표를 보장할 수 없다.
+
+4. 정리·복구의 인과관계
+
+flush_lock → segment writer → write_lock 순으로 기존 storage 계약을 따른다.
+한 batch에서 현재 정책·hold·Case 참조를 확인하고, 기존 retention_intents와 새
+capacity_retention_intents 태그를 하나의 논리 삭제 transaction으로 기록한다.
+검색/재수집 fence 및 derivative generation을 먼저 게시하고, 원본 삭제 뒤
+receipt/projection retire와 applied marker를 게시한다. 실제 삭제 직전에도
+hold/Case 보호를 재확인한다. 관리자 정책 변경의 CAS·감사와 현재 권한 검사를
+유지한다. 시작 시 시간 만료 intent만 취소하고 용량 intent는 재개한다.
+
+전체 Parquet 파일이 삭제 대상이면 빈 대체 파일을 만들지 않는다. 먼저 catalog를
+deleted로 바꾸고 sealed key/manifest와 view를 갱신한 뒤, 검증된 관리 경로만
+unlink한다. 이 사이 crash가 발생해 남은 파일은 기존 orphan 복구로 처리한다.
+일부 행만 대상이면 기존 fsync/hash/catalog 교체를 사용하며 원본 파일 크기만큼
+대체 공간을 사전 확보한다. 부족하면 원본 파일을 유지하고 intent를 pending으로
+남긴다. COPY/fsync/reader lock 대기는 한 batch 예산보다 오래 걸릴 수 있다.
+전용 thread는 공유 scheduler 호출을 피하지만 DB writer lease 동안 검색·수집·
+탐지 처리가 잠시 대기할 수 있다. 이는 독립 저장소/shard 수준의 병렬성은 아니다.
+
+DuckDB 원본 DELETE 후 CHECKPOINT를 요청하고 실제 shutil.disk_usage(data)로
+여유 공간을 다시 읽는다. SQLite WAL도 PASSIVE checkpoint를 요청한다. 행 수를
+byte 확보량으로 환산하지 않으며 net_free_delta_bytes는 다른 프로그램의 쓰기와
+삭제도 포함하는 실제 볼륨 변화다. SQLite 내부 free page와 DuckDB 삭제 행이 즉시
+파일 축소로 이어진다고 보장하지 않는다. CHECKPOINT는 물리 회수가 부분적이고,
+DuckDB VACUUM은 삭제 공간의 물리 압축을 수행하지 않는다. 본 수정은 운영 중
+DB를 새 파일로 통째로 복사·원자 전환하는 full compaction을 추가하지 않았다.
+공식 근거:
+https://duckdb.org/docs/current/operations_manual/footprint_of_duckdb/reclaiming_space.html
+https://duckdb.org/docs/current/sql/statements/checkpoint.html
+
+삭제 후 실제 free byte가 증가하지 않는 batch가 32회 연속 발생하면 blocked로
+멈춘다. 이것은 영구 기록 건수 제한이 아니라 물리 회수 실패에 대한 운영 차단이다.
+같은 정책으로 매분 다시 32회 삭제하지 않는다. 정책 revision 변경 또는 볼륨 총량
+0.1%(최소 1 MiB) 이상의 외부 free 공간 증가 후 재개할 수 있다. 보호 데이터/후보
+소진으로 blocked이면 주기적으로 다시 확인해 hold 해제 등을 반영한다. 오류가
+나면 class·state와 pending intent를 남긴다. 디스크가 실제 꽉 차서 감사 쓰기도
+실패하면 runtime/management의 memory error를 표시하고 조용히 성공으로 숨기지 않는다.
+
+5. 관리 API
+
+GET /api/v2/records/management
+  policy + revision, volume bytes/percent, trigger/stop 사용률, absolute reserve,
+  cleanup cycle/state/cursor/스캔·보호·관측 삭제 수·실제 free delta·checkpoint error.
+  전역 cycle 상태는 default tenant 전체 index 관리자만 조회한다.
+PUT /api/v2/records/management
+  같은 관리자가 기존 로그인/CSRF 보호와 version CAS로 부분 갱신한다.
+  예: {"version": 현재 GET의 version, "min_free_percent":20,
+       "cleanup_hysteresis_percent":5,"capacity_cleanup_enabled":true}
+  min_free_percent 1..95, hysteresis 1..20, 합계<100;
+  check interval 1..3600초, batch 1..10000행. bool 타입과 page/경보 범위도 검사한다.
+GET /api/v2/records/capacity_cleanup_history 및 /export
+  무제한 cursor/NDJSON 계약으로 cycle 전환 이력을 조회한다.
+GET /api/operations의 indexer 지표에는 worker running/error/tick가 포함된다.
+이 지표는 default tenant 전체 index 관리자에게만 표시된다.
+삭제 관측 수는 물리 apply가 해당 호출에서 돌려준 수다. indexer가 먼저 pending을
+마감했거나 crash 후 재개했다면 이미 지워진 행의 과거 합계를 복원하는 지표는 아니다.
+
+6. 적용·검증 경계
+
+이 요청에서는 코드·문서만 편집했다. 운영 data를 열지 않았고 서비스 시작/재시작,
+실제 정리, migration 적용, pytest/E2E/시뮬레이션 회귀는 실행하지 않았다. AST 구문
+검사는 실행 기능의 통과 증거가 아니다. 서비스가 이 소스로 새로 시작할 때 정책
+및 migration v2와 worker가 적용된다. schema v2 적용 뒤 이전 코드로 단순 downgrade
+할 수 없으며 기존 backup/restore와 호환성 정책을 따른다.
+
+향후 실제 검증 기준(이번에 실행하지 않음):
+  79.9%에서 삭제 0, 80%에서 시작, 75%까지 해제, 75~80% 반복 진동 억제;
+  설정 변경/소규모 볼륨 절대 reserve/다른 프로세스의 파일 증가 반영;
+  FIFO 순서·Case/북마크/tenant/index/explicit hold 보호, 개인정보·tenant 경계;
+  5000행을 넘는 전체 순회, 장비 timestamp 조작·quarantine 대조·queue ACK 보존;
+  전 파일 삭제·부분 파일 교체·COPY 공간 부족·crash 시 pending 재개와 원본/hash 대조;
+  삭제 전후 실제 free byte와 SQLite/DuckDB 내부 공간의 차이를 검증;
+  No-reclaim breaker의 반복 삭제 억제, Case/다른 파일만 남은 blocked 상태;
+  FTS purge/receipt/source proof/projection·상관 cursor·backup/restore·replica 대조;
+  동시 export·탐지·ingestion·hold 변경·shutdown과 scheduler 지연 측정.
+
+7. 추가 설계 아이디어(미구현)
+
+가장 유용한 확장은 '공간이 차기 전에 남은 시간을 계산'하는 것이다. 최근 수집
+byte/초와 실제 디스크 증가를 함께 측정해 80% 도달 예상 시점을 구하고, 시간보다
+남은 공간이 부족해지면 먼저 압축/외부 보관을 실행한다. 사용률 80% 고정선은
+최종 방어선으로 유지한다. 이것은 이번 FIFO/히스테리시스와 별도의 후속 기능이다.
+
+장기 조사에는 Case evidence vault를 별도 volume/object store에 두는 것이 좋다.
+원본 digest·암호화·내구성 ACK·복원 readback을 확인한 다음 로컬 원본을 제거하면
+Case 보호 때문에 전체 수집이 멈추는 상황과 실제 장기 보존을 함께 해결할 수 있다.
+같은 볼륨의 archive 폴더 이동만으로는 용량을 회수하지 못한다.
+
+고속 수집에는 처음부터 일정 크기의 immutable segment에 원본을 저장하고 hot DB는
+조회 인덱스로 쓰는 방식이 유리하다. 전체 segment 삭제로 공간 회수를 예측할 수
+있으며 giant DuckDB 파일의 부분 삭제/압축에 덜 의존한다. 원본 ACK·읽기 fence·
+Case evidence 분리·collector의 durable spool까지 포함한 별도 저장소 전환 설계다.

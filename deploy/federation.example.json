@@ -1,0 +1,28 @@
+{
+  "local_name": "region-a",
+  "include_local": true,
+  "allow_loopback_http": false,
+  "timeout": 10,
+  "max_results": 1000,
+  "max_groups": 1000,
+  "concurrency": 2,
+  "clock_skew": 60,
+  "peers": [
+    {
+      "name": "region-b",
+      "url": "https://siem-region-b.example:8787",
+      "key_id": "region-a-to-region-b",
+      "secret_env": "SAPIENTIA_FED_REGION_A_TO_REGION_B",
+      "tenants": ["default"],
+      "indexes": ["main"]
+    }
+  ],
+  "grants": [
+    {
+      "key_id": "region-b-to-region-a",
+      "secret_env": "SAPIENTIA_FED_REGION_B_TO_REGION_A",
+      "tenants": ["default"],
+      "indexes": ["main"]
+    }
+  ]
+}

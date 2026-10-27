@@ -1,0 +1,183 @@
+xSERA bundled public YARA catalog — source and license record
+==========================================================
+
+Catalog schema: xsera.yara-catalog.v1, revision 1
+Manifest: sapientia/catalogs/yara/manifest.json
+Manifest SHA-256:
+8fab59933420f358e88e3613a618e7eaa273b22deb8d2c4416d9db209cdbf28e
+
+Actual packaged inventory:
+  991 complete, unchanged upstream source files
+  2,285 compiled rule definitions
+  2,276 public rules and 9 private helpers
+  4,390,024 bytes of UTF-8 rule source
+  1,258 upstream YARA source files reviewed; 267 source files excluded
+
+Public rule count is distinct from file count and private-helper count.
+Rules may cover overlapping families or patterns; these counts do not measure
+unique threats, detection accuracy or coverage of commercial products.
+
+PINNED PRIMARY SOURCES
+---------------------
+
+1. Neo23x0/signature-base
+   Repository: https://github.com/Neo23x0/signature-base
+   Commit: 94a1c48d7ab499879287ff611dfe7f9c56376030
+   License: Detection Rule License 1.1 (DRL-1.1)
+   License URL:
+   https://github.com/Neo23x0/signature-base/blob/94a1c48d7ab499879287ff611dfe7f9c56376030/LICENSE
+   Shipped notice: catalogs/yara/licenses/signature_base-LICENSE.txt
+   Notice SHA-256:
+   8a959b2413d0c83ca1b3ce9153076c649abf2e4bbfebbb493fb24c2074a1eb8a
+   Reviewed: 752 files. Included: 547 files, 1,760 definitions,
+   comprising 1,751 public rules and 9 private helpers.
+   Excluded: 205 files.
+
+   The repository documents per-rule license overrides. The importer examines
+   metadata and comment notices; only the repository license or an equivalent
+   explicit DRL-1.1 declaration is accepted. Different or ambiguous overrides
+   remain excluded, including BSD/MIT notices and noncommercial terms in
+   individual files. The original author, references and notices are retained.
+
+   DRL-1.1 also requires retaining supplied rule-author attribution in messages
+   based on matches. Consumers must preserve match author metadata and source
+   links, including in the user interface, reports and exported results.
+
+2. ReversingLabs/reversinglabs-yara-rules
+   Repository: https://github.com/reversinglabs/reversinglabs-yara-rules
+   Commit: e0a0be54aa1e11ccfd6854e4f19e9476f328fd84
+   License: MIT
+   License URL:
+   https://github.com/reversinglabs/reversinglabs-yara-rules/blob/e0a0be54aa1e11ccfd6854e4f19e9476f328fd84/LICENSE
+   Shipped notice: catalogs/yara/licenses/reversinglabs-LICENSE.txt
+   Notice SHA-256:
+   8ac378a5a6716e1aef984c2ea50cbeb28d9a2f0a871846875245f71a02d023fc
+   Reviewed: 310 files. Included: 289 files and 289 public rules.
+   Excluded: 21 files.
+
+3. bartblaze/Yara-rules
+   Repository: https://github.com/bartblaze/Yara-rules
+   Commit: 5cc871d82361de8a80d387ec8bbd01fe4258b4a9
+   License: MIT
+   License URL:
+   https://github.com/bartblaze/Yara-rules/blob/5cc871d82361de8a80d387ec8bbd01fe4258b4a9/LICENSE
+   Shipped notice: catalogs/yara/licenses/bartblaze-LICENSE.txt
+   Notice SHA-256:
+   a90123cce1ab170abaa97396f6a0b8a8c8d061f1e774f2a7eb2a421925fb5a0e
+   Reviewed: 110 files. Included: 82 files and 95 public rules.
+   Excluded: 28 files.
+
+   Upstream explains that its INFO category includes observations such as
+   compiler/wrapper identification. Explicit informational/test rules are
+   excluded from this default detection catalog.
+
+4. JPCERTCC/jpcert-yara
+   Repository: https://github.com/JPCERTCC/jpcert-yara
+   Commit: 7837438e7bcb100bcc7f9d2be09152b19d967c0c
+   License: BSD-3-Clause
+   License URL:
+   https://github.com/JPCERTCC/jpcert-yara/blob/7837438e7bcb100bcc7f9d2be09152b19d967c0c/LICENSE
+   Shipped notice: catalogs/yara/licenses/jpcert-LICENSE.txt
+   Notice SHA-256:
+   6ef29cc700c03e436ac06e4718cdda5d88885d3cb3337ed06e7e1ceb7483faba
+   Reviewed: 86 files. Included: 73 files and 141 public rules.
+   Excluded: 13 files.
+
+The original license texts accompany the source files and must remain in
+redistributions. Publisher names do not imply endorsement of xSERA. The notices
+preserve the publishers' warranty disclaimers and attribution conditions.
+
+COMPATIBILITY, QUALITY AND EXCLUSION POLICY
+------------------------------------------
+
+The manifest records every reviewed file, its pinned upstream Git blob, source
+SHA-256, decision, reason, and recognized license declarations. Accepted entries
+also record individual rule identifiers, authors, metadata, tags, private/global
+flags and actual compiler results.
+
+Each accepted file remains byte-for-byte identical to its upstream Git blob.
+No source flattening, directive removal, rule splitting, identifier rewriting,
+binary sample download, binary execution or repository-script execution occurs.
+Complete files preserve private helpers and global-rule scope. Separate runtime
+namespaces prevent identifiers in different upstream files from colliding.
+
+The importer excludes:
+  - Different, ambiguous, research-only or noncommercial license declarations.
+    Other permissive licenses await their own obligation review.
+  - Sources exceeding 32 KiB or containing unsupported control characters.
+  - Any case-sensitive include/import word, matching the conservative runtime
+    policy. This can also reject words inside comments or strings.
+  - Missing external variables, syntax errors, compiler warnings, unresolved
+    dependencies, failure of the harmless probe or the three-second validator.
+  - Files containing no public rules.
+  - Public constant-only, file-size-only or header-only conditions.
+  - Explicit INFO/informational/filetype/test/dummy rules.
+  - Duplicate exact source bytes, if encountered.
+
+Whole files are excluded when an embedded rule fails these checks; rules are
+not edited or extracted to increase the count. Stale excluded .yar/.yara files
+are removed from the owned output directory rather than shipped unreferenced.
+
+At this snapshot the excluded-file reasons are:
+  signature_base:
+    include_import_keyword 142; different_or_unrecognized_license_override 21;
+    source_exceeds_32kib 16; restricted_license_cue 13;
+    compile_or_probe_failed 5; constant_size_or_header_only 3;
+    no_public_rules 3; source_control_character 2.
+  reversinglabs:
+    include_import_keyword 16; source_exceeds_32kib 5.
+  bartblaze:
+    include_import_keyword 21; informational_or_test_rule 6;
+    compile_or_probe_failed 1.
+  jpcert:
+    include_import_keyword 10; compile_or_probe_failed 2;
+    source_exceeds_32kib 1.
+
+VERIFIED BEHAVIOR AND LIMITS
+----------------------------
+
+The real yara-python 4.5.4 engine compiled all 991 files together in distinct
+namespaces and reported exactly 2,285 definitions, including 2,276 public rules.
+A harmless byte-string probe matched none. A separate inert literal-path oracle
+matched an existing upstream JNDI-pattern rule and retained its supplied author.
+These checks exercise compilation, compatibility, matching and attribution.
+They do not establish real-world false-positive/false-negative rates, detection
+of an unknown threat, or verified malware execution.
+
+The catalog loader verifies a source-code-pinned manifest SHA-256, each source
+SHA-256 and original license notices. It returns independent caller objects.
+It opens no Store, reads no operational telemetry, activates no response, and
+does not send a sample or rule to an external service. A catalog match requires
+context and review; no match does not certify a clean file.
+
+The catalog's own offline compile/probe runs in an isolated child with a
+three-second outer bound and one-second match timeout. Windows uses the actual
+base interpreter with the trusted current environment's site-package paths,
+avoiding a venv-launcher descendant surviving a timeout. The separately managed
+file-scanning runtime owns its own sample bounds, deadlines and verdict policy.
+
+REPRODUCIBLE MAINTENANCE
+-----------------------
+
+Offline verification, from the project environment:
+  .venv\Scripts\python.exe -m tools.import_yara_catalog --validate
+
+Explicit pinned text fetch and rebuild:
+  .venv\Scripts\python.exe -m tools.import_yara_catalog --fetch ^
+    --staging <owned-staging-directory> --output sapientia/catalogs/yara
+
+The script fetches only .yar/.yara and top-level LICENSE/README text from the
+four locked commits. It verifies their Git blob hashes before including them.
+No access token, malware sample, executable or remote script is fetched.
+The staging directory is a maintainer workspace, not operational data.
+
+Rebuilds record their capture time and consequently produce a new manifest
+digest. Review the resulting decisions and counts, pin the approved digest in
+sapientia/yara_catalog.py, run tests/test_yara_catalog.py and offline validation,
+then rebuild and verify the release package. Runtime updates do not fetch from
+GitHub or silently replace this pinned catalog.
+
+Primary engine documentation:
+  https://yara.readthedocs.io/en/stable/yarapython.html
+Primary DRL-1.1 specification:
+  https://github.com/SigmaHQ/Detection-Rule-License/blob/main/LICENSE.Detection.Rules.md

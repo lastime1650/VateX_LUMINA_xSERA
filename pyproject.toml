@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vatex-lumina-xsera"
+version = "0.20.0"
+license = "Apache-2.0 AND MIT AND BSD-3-Clause AND LicenseRef-Detection-Rule-License-1.1 AND LicenseRef-MITRE-ATTACK"
+license-files = ["LICENSE", "NOTICE", "THIRD_PARTY_NOTICES.md", "sapientia/catalogs/LICENSE-MITRE.txt", "sapientia/catalogs/yara/licenses/*", "sapientia/catalogs/capa/LICENSE*"]
+description = "Vatex LUMINA xSERA - Extended Security Evidence, Response and Automation"
+requires-python = ">=3.12"
+dependencies = ["fastapi==0.142.4", "uvicorn==0.54.0", "duckdb==1.5.6", "argon2-cffi==25.1.0", "nats-py==2.16.0", "cryptography==50.0.2", "yara-python==4.5.4", "defusedxml==0.7.1"]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1", "httpx==0.28.1"]
+archive = ["boto3>=1.40,<2"]
+analysis = ["yara-python==4.5.4"]
+sigma-analysis = ["pysigma==2.0.1", "PyYAML==6.0.3"]
+online-analysis = ["river==0.26.1"]
+binary-analysis = ["flare-capa==9.4.0", "flare-floss==3.1.1"]
+emulation-analysis = ["speakeasy-emulator==1.5.11"]
+ml-cpu = ["torch==2.13.0+cpu"]
+
+[project.scripts]
+sapientia = "sapientia.__main__:main"
+lumina-xsera = "sapientia.__main__:main"
+
+[tool.setuptools.package-data]
+sapientia = ["web/*", "endpoint_agent/*", "endpoint_agent/**/*", "catalogs/*", "catalogs/yara/**/*", "catalogs/yara/*", "catalogs/capa/**/*", "catalogs/capa/*"]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["**/__pycache__/*", "**/*.pyc", "**/*.pyo"]
+
+[tool.setuptools.packages.find]
+include = ["sapientia*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

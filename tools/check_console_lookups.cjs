@@ -1,0 +1,23 @@
+'use strict';
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const source = fs.readFileSync(path.resolve(__dirname, '../sapientia/web/console_lookups.js'), 'utf8');
+const first = source.indexOf('  function scalarType('), last = source.indexOf('  async function render(', first);
+assert(first >= 0 && last > first);
+const context = {}; vm.createContext(context); vm.runInContext(source.slice(first, last), context);
+const plain = value => JSON.parse(JSON.stringify(value));
+const assertions = [];
+function test(name, callback) { callback(); assertions.push(name); }
+test('numeric-looking strings stay strings', () => { assert.deepEqual(plain(context.parseCell('string', '001')), {present: true, value: '001'}); });
+test('numbers and booleans retain types', () => { assert.equal(context.parseCell('number', '12.5').value, 12.5); assert.equal(context.parseCell('boolean', 'false').value, false); });
+test('missing field and null remain distinct', () => { assert.deepEqual(plain(context.parseCell('missing', '')), {present: false}); assert.deepEqual(plain(context.parseCell('null', '')), {present: true, value: null}); });
+test('scalar classifier uses own fields and handles reserved JS property safely', () => { assert.equal(context.scalarType({}, 'constructor'), 'missing'); assert.equal(context.scalarType({constructor: 'value'}, 'constructor'), 'string'); });
+test('unsafe integer precision blocks edits', () => { assert.equal(context.scalarType({n: 9007199254740992}, 'n'), 'unsupported'); assert.throws(() => context.parseCell('number', '9007199254740992'), /정수/); });
+test('nested values fail closed', () => { assert.equal(context.scalarType({n: {value: 1}}, 'n'), 'unsupported'); assert.throws(() => context.parseCell('unsupported', '{}'), /지원되지/); });
+test('non-finite and invalid booleans are rejected', () => { assert.throws(() => context.parseCell('number', 'Infinity')); assert.throws(() => context.parseCell('number', '')); assert.throws(() => context.parseCell('boolean', 'yes')); });
+test('null boolean string and missing classify without coercion', () => { const row = {a: null, b: false, c: 'false', d: 0}; assert.deepEqual(['a', 'b', 'c', 'd', 'e'].map(key => context.scalarType(row, key)), ['null', 'boolean', 'string', 'number', 'missing']); });
+const report = {passed: assertions.length, assertions, fixture_only: true, production_data: false};
+if (process.argv[2]) fs.writeFileSync(path.resolve(process.argv[2]), JSON.stringify(report, null, 2));
+process.stdout.write(JSON.stringify(report, null, 2) + '\n');

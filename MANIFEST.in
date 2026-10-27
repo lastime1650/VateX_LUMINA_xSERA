@@ -1,0 +1,10 @@
+include LICENSE NOTICE THIRD_PARTY_NOTICES.md SECURITY.md README.md pyproject.toml requirements-lock.txt setup.py start.ps1 start.cmd
+recursive-include sapientia *.py *.html *.css *.js *.json *.jsonl *.yaml *.yml *.yar *.yara *.txt *.md *.ps1 *.sh *.c *.h *.rs *.conf *.cfg *.rules
+recursive-include tests *.py *.js *.cjs *.json *.yaml *.yml *.txt
+recursive-include tools *.py *.ps1 *.sh *.js *.cjs
+recursive-include docs *.md *.json *.html *.txt
+recursive-include deploy *.md *.conf *.service *.ps1 *.sh *.json
+prune data
+prune vendor
+prune .venv
+global-exclude *.pyc *.pyo __pycache__ .pytest_cache .ruff_cache

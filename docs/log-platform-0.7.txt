@@ -1,0 +1,71 @@
+Vatex LUMINA xSERA 0.7 — 로그 데이터 플랫폼 운영 안내
+작성일: 2026-10-09
+
+적용 범위
+이 문서는 0.7 소스의 동작과 한도를 설명한다. 실행한 회귀·부하·복원 시험의 결과와 운영 적용 여부는 함께 제공되는 검증 보고서가 기준이다. Elasticsearch 또는 Splunk 전체 기능·성능과 동등하거나 더 우수하다는 인증은 아니다.
+운영 경로: C:\Vatex_LUMINA_xSERA, 기본 웹: http://127.0.0.1:8787. 외부 접속에는 기존 HTTPS 요구가 유지된다. 단일 데이터 디렉터리에는 서버 프로세스 하나만 실행한다.
+
+수집 권한과 정규화
+수집 키는 활성 관리자인 발급자, 테넌트, 만료, 폐기 상태 및 현재 인덱스 권한을 확인한다. 쓰기 인덱스는 정확한 이름 1~256개이고 생략 시 main이다. 와일드카드 쓰기 키는 허용하지 않는다. 발급자를 확인할 수 없는 이전 키는 재발급해야 한다. UI의 설정 및 계정 > 수집 키에서 인덱스와 발급자를 확인한다.
+인덱스 제한 관리자는 자신의 범위를 넘는 계정·역할·인덱스 권한을 부여할 수 없다. 계정 생성·역할 및 활성 상태 변경, 테넌트 전체 보존 정책과 전체 감사 조회에는 모든 인덱스 관리 권한이 필요하다. 전체 appliance membership·감사 체인·온라인 백업은 추가로 default 테넌트 관리자만 수행한다. 회원 가입·갱신·복구 변경은 잠금 획득 후 현재 권한을 다시 확인하고 작업 완료까지 유지한다. 이 구간에는 기존 네트워크 timeout인 요청당 최대 12초까지 인입이 대기할 수 있다.
+HTTP/HEC/OTLP, FortiGate, XDR 수입과 장비 수집은 실제 수락 트랜잭션 안에서 원래 인덱스와 파서 라우팅 이후 인덱스를 모두 검사한다. 허용되지 않은 혼합 배치를 일부 수락하지 않는다. canonical metadata가 있다는 이유로 검증을 우회하지 않는다.
+명시적으로 지정한 마스킹 값은 정규화 필드뿐 아니라 메시지, 원문·JSON 문자열 복사본, 파생 값과 격리 저장본에도 제거한다. 임의 암호문·base64나 모든 PII를 자동 식별·복호화하는 기능은 아니다. 로그의 마스킹은 수락 이전에 적용하며 과거 로그 전체의 소급 정리는 별도 작업이다.
+
+Syslog 상호 TLS
+선택적 CLI: serve --syslog-port 6514 --syslog-transport tls --syslog-cert <server.pem> --syslog-key <server.key> --syslog-client-ca <client-ca.pem> --syslog-peer-bindings <bindings.json>
+bindings.json 형식: {"<클라이언트 인증서 DER의 SHA256 소문자 64자리>":{"tenant":"default","index":"firewall"}}
+인증서 CA 검증에 성공하고 fingerprint가 등록된 클라이언트만 해당 테넌트·인덱스에 기록한다. 파서의 다른 인덱스 라우팅은 거부한다. 원문에 collector_client_fingerprint를 남긴다. 인증서 갱신 시 새 fingerprint를 구성하고 서버를 재시작한다.
+TCP/TLS 프레임 수신은 영속 수락 ACK와 같지 않다. 서버의 admitted 카운터 또는 HTTP 수락 응답을 확인한다. UDP는 송신자 인증과 역압력이 없으며 누락 카운터를 확인해야 한다.
+
+저장과 수명주기
+Hot은 events.duckdb이고 분할 파일은 data/log-segments 아래에 저장된다. 분할 기준은 테넌트·인덱스·UTC 발생일이며 전환·만료 기준은 수신 시각이다. Parquet/ZSTD를 사용하며 hot 원본을 실제로 제거한 뒤 중복 없는 events_all 통합 뷰로 검색한다.
+Warm, Cold, Archive는 현재 로컬 저장 단계이다. 이름만으로 다른 디스크나 원격 객체 저장소로 이동했다고 해석하지 않는다. 외부 S3 백업과 로컬 검색용 archive는 별개이다.
+기본 전환은 수신 후 1일/7일/30일이다. 기본 만료는 테넌트 보존 기간이다. 짧은 보존은 뒤의 단계에 도달하기 전에 만료될 수 있다. 사용자 정책은 1 <= hot_days < warm_days < cold_days < retention_days <= 3650인 누적 일수를 지정한다. 테넌트 전체 hold가 활성화되어 있으면 인덱스 정책보다 우선한다.
+로그 관리 > 인덱스 수명주기에서 저장한다. 버전이 오래된 수정은 409로 거부한다. '지금 저장 단계 적용'은 단계 전환을 수행하며 만료를 앞당겨 삭제하는 버튼이 아니다. 주기적 보존은 한 시간마다 실행하고 시간 예산을 넘으면 다음 순회에서 이어간다.
+ready 파일의 SHA256을 검색·백업 전에 검사한다. 손상 또는 누락은 부분 결과를 성공으로 반환하지 않는다. 파일 게시 후 종료됐더라도 manifest와 hot 원본을 대조해 중복을 복구한다. 복원 시 상대 경로를 새 디렉터리에 재구성한다.
+Hot의 인덱스별 바이트는 공유 DuckDB 파일에서 정확히 귀속하지 않는다. API는 null과 설명을 제공하며 전체 물리 크기는 플랫폼 health.storage_bytes를 참고한다. Parquet 단계의 바이트는 실제 파일 크기이다.
+
+사건 원본 보존
+사건 · 조사 > 원본 보존에서 현재 원본 수·누락·보존 수를 확인한다. 관리자가 현재 사건 버전과 사유를 제출하면 현재 근거 및 북마크가 참조하는 최대 5,000개 원본과 receipt를 확인한 뒤 원자적으로 보존한다. 하나라도 없으면 전체 hold를 거부한다.
+보존은 그 시점의 명시적 근거 스냅샷이다. 이후 추가되는 근거는 다시 보존해야 한다. 사건 화면에 아직 보존하지 않은 원본 수를 표시한다. 로컬 정책이므로 운영체제 관리자에 대한 WORM 보장은 아니다. 해제하면 설정된 기간에 따라 다음 보존 순회에서 삭제할 수 있다. 보존·해제는 사건 버전을 바꾸어 이전 승인 근거를 무효화한다.
+북마크/조사 메모는 원본과 다른 조사 기록이다. 원본 만료가 이 기록을 자동 삭제하지 않는다. 암호화 백업과 외부 Object Lock 복사본에도 별도 보존 기간이 있다. 개인정보 삭제 정책은 원본·조사 기록·백업의 각 보존을 함께 설계해야 한다.
+
+전문 검색과 전체 내보내기
+로그 관리에서 기간·인덱스·호스트·소스·전문 검색을 폼으로 지정한다. SQLite FTS5 unicode61 색인이 term, phrase, AND/OR/NOT 전문 조건을 처리한다. 최초에는 본문을 한 번 읽고, 이후 immutable (tenant,event_id) registry로 새 본문만 색인한다. 시간 watermark를 사용하지 않아 늦게 도착한 이벤트를 놓치지 않는다. ID 목록 순회 비용은 여전히 전체 데이터량에 비례한다.
+검색 스냅샷은 검색 당시 결과를 디스크에 고정한다. 이후 수집은 다음 검색에 포함된다. 일반 미리보기/기존 검색 작업의 1,000건 한도와 별개이며 API /api/logs/snapshots 및 페이지/내보내기를 사용한다. 언어는 구조화 JSON 이벤트 필터만 지원하고 임의 SQL이나 집계 스냅샷은 받지 않는다.
+기본 TTL 1시간, 범위 60초~24시간, 스냅샷당 최대 2GiB, 테넌트당 최대 8GiB 및 32개이다. 동시 슬롯은 기존 검색과 공유한다. 생성 시간은 설정의 query_timeout을 최소 15초/최대 120초로 제한한다. 제한을 넘으면 일부 성공이나 조용한 잘림 대신 실패한다. 더 큰 조회는 기간을 나누어 수행해야 한다.
+페이지는 최대 5,000행 및 약 2MiB이며 received,event_id 순서를 유지한다. 소유자·현재 테넌트·현재 인덱스 범위를 매 페이지 확인한다. 권한 변경, TTL 만료, 원본 보존 삭제 epoch 변경 또는 미적용 보존 intent는 재조회/새 검색이 필요하다. TTL 파일 정리는 약 30초마다 수행하고 하루 지난 중단 작업의 파생 파일도 정리한다.
+'전체 파일 저장'은 직접 파일 쓰기 지원 브라우저에서는 페이지를 순차 기록한다. 그 외에는 Content-Length가 정확한 HTTP 스트림 다운로드를 사용한다. 매 조각마다 권한과 보존 상태를 재검사하고 중단되면 완전한 다운로드로 표시되지 않도록 길이를 고정한다. 전체 NDJSON의 SHA256을 API/화면에서 제공한다. 인증 전용 GET 스트림은 /api/logs/snapshots/{id}/download이다.
+FTS·검색 스냅샷은 파생 캐시이며 백업에 넣지 않는다. 원본 복원 뒤 다시 생성한다.
+
+온라인 백업과 복원
+로그 관리에서 백업 암호와 확인을 입력한다. 기본 테넌트의 모든 인덱스 관리 권한을 가진 관리자만 전체 appliance 백업을 만든다. 작업 완료 시 현재 권한을 다시 확인한다. 암호는 감사 로그나 설정에 저장하지 않는다.
+서버는 짧은 제어·분석 DB 복사 구간을 잠그고, 불변 분할 파일 복사 구간에는 수집을 계속 허용한다. SQLite online backup과 DuckDB native COPY FROM DATABASE, SHA256 manifest를 사용한다. 백업 중 브로커 journal·TLS 파일·환경 변수·외부 설정까지 복사하는 것은 아니다.
+결과는 data/private/online-backups/<id>에 암호화 포맷 2 bundle로 남는다. 현재 사용자/SYSTEM 전용 Windows DACL 또는 POSIX private permissions를 사용한다. 암호문 header, manifest.enc, chunks만 transport 대상이다. 작업용 평문 스냅샷은 완료·실패 시 정리한다.
+포맷 2는 fresh scrypt salt와 AES256-GCM 키, nonce prefix+전역 단조 counter, 파일·순서·header를 결합한 AAD를 사용한다. 기본 조각 8MiB, 최대 1,000,000조각(약 7.63TiB 표현 상한), 파일 100,000개, manifest 64MiB이다. 표현 상한은 해당 규모 실전 성능 검증이 아니다. 암호문/manifest/조각 누락·변조·재배치·중복은 복원 게시 전에 거부한다. 새 경로만 허용하며 기존 데이터를 덮어쓰지 않는다.
+오프라인 CLI 기본 암호화:
+  .\.venv\Scripts\python.exe -m sapientia --data C:\Vatex_LUMINA_xSERA\data backup C:\xsera-backups\bundle-20261009 --encrypt
+새 경로 복원:
+  .\.venv\Scripts\python.exe -m sapientia --data C:\Vatex_LUMINA_xSERA\restored-20261009 restore C:\xsera-backups\bundle-20261009 --encrypted
+서비스가 데이터 경로를 사용하는 중에는 오프라인 CLI를 실행하지 않는다. --legacy-encryption은 이전 단일 파일 암호화 포맷 1을 만들며 restore --encrypted는 두 포맷을 구분한다. 복원은 세션·SSO transient 상태를 폐기한다. 패스프레이즈 분실 복구 기능은 없으므로 별도 비밀 관리 절차에 보관한다.
+온라인 백업은 일관된 시점의 전체 스냅샷이다. 임의 시각 PITR/연속 증가 백업은 제공하지 않는다. NATS 복제 journal은 별도 복구 자원이며 이 bundle에 포함되지 않는다.
+
+선택적 S3 Object Lock 백업
+선택적 archive extra(boto3>=1.40,<2)를 별도 설치하고, IAM credential provider chain을 구성한다. GUI/API에 AWS secret을 입력하지 않는다. 게시/회수는 로컬 운영자 CLI만 제공한다.
+config.json은 정확히 다음 키를 갖는다. 실제 계정/버킷을 사용하기 전에 별도 QA 버킷에서 복원을 확인한다.
+  {"bucket":"your-lock-bucket","prefix":"xsera-backups","region":"ap-northeast-2","endpoint":null,"mode":"COMPLIANCE","retention_days":90,"expected_bucket_owner":"123456789012"}
+HTTPS, bucket versioning, ObjectLockEnabled 및 예상 owner를 확인한다. UUID prefix 아래에 IfNoneMatch='*'와 SHA256, 서버 암호화 및 보존 일시를 붙인다. 각 객체의 정확한 version HEAD로 checksum/size/lock/retention을 검증하고 version 목록 members.ndjson, 마지막 commit.json을 게시한다.
+  .\.venv\Scripts\python.exe -m sapientia archive-publish C:\xsera-backups\bundle-20261009 --config C:\xsera-config\archive.json
+게시 결과의 commit key와 version_id를 독립 운영 기록에 보관한다. 원격 잠금은 새 버전 생성을 막지 않으므로 회수 시 commit version 고정을 권장한다.
+  .\.venv\Scripts\python.exe -m sapientia archive-fetch xsera-backups/<UUID>/commit.json C:\xsera-backups\fetched-20261009 --config C:\xsera-config\archive.json --commit-version <게시한-version-id>
+회수는 commit→members→모든 객체의 고정 버전, 크기·SHA256·유효한 원격 보존을 검증해 새 로컬 암호문 bundle을 만든다. 그 뒤 패스프레이즈로 restore --encrypted를 실행해야 복원 검증이 완료된다.
+부분 실패는 CLI JSON error.report로 확인한다. 잠긴 부분 객체를 삭제하거나 보존을 우회하지 않는다. COMPLIANCE와 GOVERNANCE는 서로 다르며 GOVERNANCE 특권 우회 가능성을 고려한다. 로컬 원본의 불변성, 원격 bucket 정책과 root key 관리까지 자동 보장하지 않는다. 현재 검증은 fake S3이며 실제 AWS·타 S3 서비스·IAM/KMS 연동은 미검증이다.
+
+분산 검색과 복제
+정적 federation 설정에 dataset_id, replica_set, preference 및 필요 시 local_dataset_id/local_replica_set/local_indexes를 지정한다. 동일 dataset 복제 후보는 한 번만 집계하며 선호 후보가 실패하거나 지연되면 예산 안에서 다른 후보를 확인한다. 응답의 dataset/replica 정체성이 다르면 거부한다. local_indexes는 관리자의 '*'와 정확한 peer grants를 같은 명시적 데이터 범위로 맞출 때 사용한다.
+JSON aggregates의 count/sum/avg/min/max/distinct를 최대 8개 지원한다. avg는 합계와 수를 합쳐 계산하며 distinct는 타입을 보존한 정확한 집합을 병합한다. 숫자 문자열은 숫자로 합산하지 않는다. 정확한 합계는 정수 HUGEINT/Python int를 거치고 최종 JSON safe integer 범위를 넘으면 413을 반환한다. 정확한 distinct/그룹/응답 한도를 넘겨 일부 결과로 대체하지 않는다.
+복제 읽기는 quorum barrier, local catchup, queue 및 retention intent 완료와 min_sequence를 확인한다. 단순 status/readiness 조회는 quorum을 실제 확인한 것과 다르다. TLS hostname/CA 검증을 유지하며 peer DNS는 시작 시 해석해 고정하고 변경 시 설정 재시작이 필요하다.
+이 기능은 정적 데이터셋 검색/복제본 대체이다. 자동 shard 배치·수집 라우팅·rebalance, replica 자동 증설, 애플리케이션 load balancer HA, 독립 장비 장애 인증을 제공하지 않는다. NATS 구성·자격증명·TLS·외부 broker 복구는 운영자가 별도로 관리한다.
+
+추가로 필요한 운영 수준
+전체 SPL 의미 호환·가속 CIM 데이터 모델, 자동 shard/HA, 로컬 원본 WORM 및 저장 데이터 KMS 암호화·자동 키 회전, 직접 원격 archive 검색/오프로드, 임의 시각 PITR, 조사 기록과 backup까지 통합한 삭제 정책, 장기간/TB/PB/다중 독립 장비 검증은 이번 구현으로 완성됐다고 표시하지 않는다. 디스크 암호화/인프라·IAM·복구 운영과 기능 확장이 각각 필요하다. 기존 XDR/SOAR의 고유 미지원 기능도 이 로그 계층 업그레이드로 자동 구현되는 것은 아니다.

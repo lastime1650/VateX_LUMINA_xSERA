@@ -1,0 +1,92 @@
+Vatex LUMINA 0.3 운영 가이드
+
+SOAR 시작
+1. 사건을 선택하고 원본 타임라인과 작업공간을 검토한다.
+2. 플레이북을 저장한다. 저장만으로 실행되지 않는다.
+3. 사건에 실행을 요청한다. 정의·사건 근거·인덱스 범위를 스냅샷으로 고정한다.
+4. 실행 요청자와 다른 활성 분석가 또는 관리자가 승인한다.
+5. 스케줄러가 영속 단계 상태를 바탕으로 실행한다. 실행 이력에서 결과·오류·재시도를 확인한다.
+6. 필수 사건 작업이 남아 있으면 사건 해결/오탐 종결을 거절한다. 취소는 다음 단계 진행을 중단하며 이미 발생한 원격 부작용을 되돌리지 않는다.
+
+플레이북 예시 (POST /api/playbooks, 세션 CSRF 필요)
+{
+  "name": "기본 사건 분류",
+  "version": 0,
+  "steps": [
+    {"id": "review", "action": {"type": "add_task", "title": "원본 증거와 영향 범위 확인", "mandatory": true}},
+    {"id": "note", "action": {"type": "add_note", "note": "승인된 분류 절차를 시작했습니다."}},
+    {"id": "triage", "action": {"type": "set_status", "status": "triage", "note": "승인된 플레이북 분류"}}
+  ]
+}
+
+POST /api/playbooks/{id}/runs
+{"incident_id":"실제 사건 ID", "request_id":"클라이언트가 재시도 동안 유지하는 고유 ID"}
+POST /api/playbook-runs/{id}/approve 또는 /cancel 의 본문은 정확히 {} 이다.
+GET /api/playbook-runs/{id} 에서 단계 상태와 결과를 확인한다.
+로컬 단계 조치와 멱등 영수증·감사는 같은 SQL 트랜잭션에 저장한다.
+현재 실행 요청자와 승인자의 계정·역할·전체 사건 인덱스 범위를 실행 직전 다시 확인한다. 플레이북 정의는 요청 시 고정되며 작성자와의 분리 승인을 별도로 강제하지 않는다.
+한 플레이북 최대 16단계, 순차 실행이다. 일반 조건 분기/DAG/병렬 실행을 제공하지 않는다.
+
+외부 HTTPS 조치 (운영자가 별도 구성해야 함)
+SAPIENTIA_SOAR_CONFIG 환경 변수로 서비스가 읽을 JSON 파일의 절대 경로를 지정하고 서비스를 다시 시작한다.
+예시 구성:
+{"allow_hosts":["approved-response.example.com"],"destinations":{"response_gateway":{"url":"https://approved-response.example.com/actions","secret_env":"SAPIENTIA_RESPONSE_SECRET","idempotency_guaranteed":false}}}
+이 예시 호스트는 실제 연동이 아니다. 비밀값은 환경 변수에 32..512자의 인쇄 가능한 ASCII로 전달한다.
+플레이북 조치: {"type":"webhook","destination":"response_gateway","payload":{"operation":"create_review_ticket"}}
+Authorization Bearer와 안정된 Idempotency-Key를 사용한다. 응답 내용과 비밀은 실행 결과에 저장하지 않는다.
+정확한 allowlist 호스트, 인증서/호스트 검증, TLS>=1.2, DNS 고정, 공인 주소만 허용한다. 프록시·redirect·URL query/자격증명/fragment는 허용하지 않는다.
+온프레미스 사설 주소의 원격 실행 agent/커넥터는 이번 버전에서 제공하지 않는다.
+목적지 구성을 변경하면 기존 승인 상태의 외부 실행을 무효화한다.
+서버가 부작용을 수행하고 응답 전에 연결이 끊기면 결과를 알 수 없다. 상대의 실제 멱등 계약을 확인한 경우에만 idempotency_guaranteed=true로 설정한다.
+그 외에는 불확실한 결과를 자동 재전송하지 않는다. 운영자는 원격 이력과 Idempotency-Key를 확인해야 한다.
+실제 외부 목적지·비밀값·자동 대응 정책은 기본 배포에 등록하지 않는다.
+
+사건 작업공간
+GET/PUT /api/incidents/{id}/workspace: 버전 CAS로 우선순위·기한·태그 관리.
+POST /api/incidents/{id}/actions: {"request_id":"고유 ID","action":{"type":"add_note","note":"검토 근거"}}
+add_task, assign, set_status도 지원한다. PATCH /api/incidents/{id}/tasks/{task_id}로 작업 완료 처리.
+POST /api/incidents/{id}/bookmarks: 실제 event_id와 label을 지정해 증거 스냅샷 보관.
+GET /api/incidents/{id}/export: 사건·작업·노트·북마크·탐지 근거·판정 이력을 내보낸다. 전체 2MiB/항목별 10000기록 한도 초과는 부분 결과 대신 실패한다.
+SHA256은 canonical JSON에서 sha256/integrity_note 필드를 넣기 전 계산한다. 독립 WORM/법적 서명 증명이 아니다.
+
+데이터 품질
+관리자 전체 인덱스 권한으로 파서 정책을 저장한다. 소스 이름은 정확히 일치하며 소스당 활성 정책은 하나다.
+PUT /api/parsers/{name}: {"version":0,"definition":{"source":"my_app","route_index":"main","decode_message_json":true,"mappings":{"raw.security.user":"raw.parsed.username"},"redact_fields":["raw.parsed.password","message"],"required_fields":["raw.security.user"],"on_failure":"quarantine","enabled":false}}
+message 전체를 마스킹하면 원래 JSON 문자열은 보존되지 않는다. 감사/분석에 필요한 필드와 비밀 제거 요구를 샘플 미리보기로 검토한다.
+POST /api/parsers/preview: {"definition":{...},"event":{...}}. 영속 수집/정책 저장을 하지 않는다.
+수집 응답 accepted는 큐+격리 저장 수이며 quarantined 필드가 있으면 해당 수만큼 검색 불가 상태다.
+격리 이벤트는 마스킹 후 보관한다. 원본 collector payload로 계산한 안정 event_id 영수증은 정책 변경 뒤 재시도해도 중복 수락을 막는다.
+GET /api/quarantine?offset=0&count=10, POST /api/quarantine/replay {"event_ids":["..."]}.
+재처리는 마스킹된 저장본에 현재 정책을 적용한다. 지워진 값을 복구하지 않는다. 한도/실패 시 배치 전체가 원자적으로 롤백한다.
+모니터는 정확한 소스와 구체 인덱스 목록을 지정한다. 수신 지연·필수 필드 누락·소스 침묵을 측정한다. 공격 탐지와 구분한다.
+기본 배포에는 활성 파서/모니터를 추가하지 않는다.
+
+탐지 콘텐츠
+POST /api/content/packages: {"package":{schema_version,name,title,prerequisites,rules,fixtures},"expected_version":0}.
+패키지 v1은 구체 인덱스 하나를 고정한다. 각 규칙에 양성/음성 fixture와 정확한 기대 엔터티 목록이 필요하다.
+test에서 실제 컴파일러로 fixture를 실행한다. coverage는 최근 실제 sourcetype과 필수 필드 존재 여부를 측정한다.
+publish는 현재 관리자만 가능하고 통과 fixture와 완전한 선행 데이터가 필요하다. 정책·매핑·활성 개정·감사는 한 트랜잭션이다.
+rollback은 과거 실제 활성화했던 개정으로만 가능하다. 정책 ID는 유지한다.
+명시적인 Sigma JSON scalar 선택·AND/OR/NOT·문자열 포함/접두/접미 검색을 SPL로 변환한다. logsource 조건에는 운영자 필드/값 매핑이 반드시 필요하다.
+list/wildcard/null/fieldref/집계/상관/n-of 같은 미지원 구문은 거절한다. 변환한 SPL은 검색/예약 검색용이며 평면 상관 필터로 자동 변환하지 않는다.
+
+늦은 이벤트와 과거 재평가
+상관 정책 evaluation_delay=0..86400초로 이벤트 평가 창을 스케줄 시각보다 뒤로 늦춘다. 기존 정책 기본값은 0이다.
+next_run은 스케줄 시각으로 전진하고 last_end·위험 기여 시각은 실제 데이터 평가 창 끝으로 기록한다.
+POST /api/detections/{policy_id}/replay: {"end":고정된 과거 epoch,"version":현재 정책 버전,"request_id":"재시도 동안 유지하는 고유 ID"}.
+현재 정책 정의로 해당 창을 수동 평가하며 고정 정책/엔터티/이벤트 ID fingerprint로 중복 기여를 막는다. 스케줄 커서를 전진시키지 않는다.
+요청 ID를 다른 창/정의에 재사용하면 충돌한다. 현재 요청자·소유자의 권한을 검증한다.
+평가 지연을 넘겨 도착한 모든 이벤트를 자동으로 backfill하는 기능은 아니다. 실제 공격 탐지 누락/오탐률은 별도 평가해야 한다.
+
+엔터티·행동
+엔터티는 명시적 사용자/호스트/IP/장비 별칭, 테넌트 고유성, 구체 인덱스 목록, 중요도 메타데이터를 가진다.
+그래프는 같은 이벤트의 공동 관찰 관계이다. 소유권/네트워크 연결/인과관계로 해석하지 않는다.
+기준선은 epoch 정렬된 최대336개 버킷의 과거 기간을 학습한다. 평가 시작은 학습 종료 이후여야 한다.
+평가 항목은 빈도 z-score, 새 엔터티/호스트, 명시 UTC 업무시간 이탈이다. 충분한 학습 데이터 조건을 확인한다.
+전체 모집단 집계와 실제 event_id 근거를 제공하며 한도 초과를 숨기지 않는다. 자동 사건 생성/고급 ML/정확도 인증 기능이 아니다.
+
+자원/접근 경계
+현재 계정·테넌트·역할·인덱스 권한을 조회/변경/장시간 검색 뒤 다시 확인한다. 클라이언트가 제시한 권한은 실제 권한과 교집합만 적용한다.
+내부 집계는 공유 검색 슬롯·시간 제한·최대 행 수·2MiB 응답 한도를 따른다. 사용자 raw SQL API는 제공하지 않는다.
+클러스터 코드 경로는 공유 메타데이터 SQL journal을 사용한다. 이 기능 추가가 자동 검색 sharding/애플리케이션 장애전환/다중 리전 DR을 완성하지 않는다.
+업그레이드 비교표에 아직 완료되지 않은 벤더 기능과 수락 기준을 별도로 남긴다.

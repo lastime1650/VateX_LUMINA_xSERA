@@ -1,0 +1,16 @@
+# Merge manually into a qualified passive Suricata configuration.
+# This fragment does not select a capture interface or start a sensor.
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      types:
+        - alert
+        - flow
+        - dns
+        - http
+        - tls
+        - stats:
+            totals: yes
+            threads: no

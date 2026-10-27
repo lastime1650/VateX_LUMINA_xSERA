@@ -1,0 +1,3812 @@
+[
+  {
+    "id": "R-WIN-001",
+    "name": "Windows · PowerShell encoded command",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "-enc ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-002",
+    "name": "Windows · PowerShell download cradle",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "DownloadString",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-003",
+    "name": "Windows · PowerShell web request",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "Invoke-WebRequest",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-004",
+    "name": "Windows · PowerShell execution bypass",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "ExecutionPolicy Bypass",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-005",
+    "name": "Windows · PowerShell hidden window",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "WindowStyle Hidden",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-006",
+    "name": "Windows · Certutil URL cache",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "-urlcache",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-007",
+    "name": "Windows · Certutil decode payload",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1140"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "-decode",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-008",
+    "name": "Windows · Bitsadmin transfer",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1197"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "bitsadmin /transfer",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-009",
+    "name": "Windows · Rundll32 JavaScript",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1218.011"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "javascript:",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-010",
+    "name": "Windows · Regsvr32 remote script",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1218.010"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "scrobj.dll",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-011",
+    "name": "Windows · Mshta remote HTA",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1218.005"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "http",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-012",
+    "name": "Windows · Wmic process create",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1047"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "process call create",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-013",
+    "name": "Windows · Vssadmin shadow deletion",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1490"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "delete shadows",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-014",
+    "name": "Windows · Wbadmin backup deletion",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1490"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "delete catalog",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-015",
+    "name": "Windows · Bcdedit recovery disable",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1490"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "recoveryenabled No",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-016",
+    "name": "Windows · Wevtutil log clear",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1070.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": " cl ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-017",
+    "name": "Windows · Defender preference exclusion",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "Add-MpPreference",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-018",
+    "name": "Windows · Defender real-time disable",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "DisableRealtimeMonitoring",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-019",
+    "name": "Windows · Schtasks task create",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1053.005"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "/create",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-020",
+    "name": "Windows · Sc service create",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1543.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": " create ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-021",
+    "name": "Windows · Net user account add",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1136.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "user /add",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-022",
+    "name": "Windows · Net local administrators add",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1098"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "localgroup administrators",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-023",
+    "name": "Windows · Psexec service pattern",
+    "description": "Observed with current agent; tune for production. OS: windows; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1021.002"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "psexec",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-024",
+    "name": "Windows · RDP registry enable",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: registry_value_set; evidence: registry.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1021.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "registry_value_set",
+        "ignore_case": true
+      },
+      {
+        "field": "registry.path",
+        "operator": "contains",
+        "value": "fDenyTSConnections",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-025",
+    "name": "Windows · Run key persistence",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: registry_value_set; evidence: registry.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1547.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "registry_value_set",
+        "ignore_case": true
+      },
+      {
+        "field": "registry.path",
+        "operator": "contains",
+        "value": "\\CurrentVersion\\Run",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-026",
+    "name": "Windows · Winlogon shell modification",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: registry_value_set; evidence: registry.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1547.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "registry_value_set",
+        "ignore_case": true
+      },
+      {
+        "field": "registry.path",
+        "operator": "contains",
+        "value": "\\Winlogon\\Shell",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-027",
+    "name": "Windows · Image file execution options",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: registry_value_set; evidence: registry.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1546.012"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "registry_value_set",
+        "ignore_case": true
+      },
+      {
+        "field": "registry.path",
+        "operator": "contains",
+        "value": "Image File Execution Options",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-028",
+    "name": "Windows · Security center disable",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: registry_value_set; evidence: registry.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "registry_value_set",
+        "ignore_case": true
+      },
+      {
+        "field": "registry.path",
+        "operator": "contains",
+        "value": "Windows Defender\\Disable",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-029",
+    "name": "Windows · Startup folder payload",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1547.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "contains",
+        "value": "\\Start Menu\\Programs\\Startup\\",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-030",
+    "name": "Windows · System32 executable drop",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1036"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "contains",
+        "value": "\\Windows\\System32\\",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-031",
+    "name": "Windows · Web-root script drop",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1505.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "contains",
+        "value": "\\inetpub\\wwwroot\\",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-032",
+    "name": "Windows · LSASS memory access",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: process_accessed; evidence: process.target.executable.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1003.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_accessed",
+        "ignore_case": true
+      },
+      {
+        "field": "process.target.executable",
+        "operator": "endswith",
+        "value": "lsass.exe",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-033",
+    "name": "Windows · Remote thread creation",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: remote_thread_created; evidence: process.target.executable.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1055"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "remote_thread_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.target.executable",
+        "operator": "exists",
+        "value": true,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-034",
+    "name": "Windows · Process tampering",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: process_tampered; evidence: process.tamper.type.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1055.012"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_tampered",
+        "ignore_case": true
+      },
+      {
+        "field": "process.tamper.type",
+        "operator": "exists",
+        "value": true,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-035",
+    "name": "Windows · Unsigned driver load",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: driver_loaded; evidence: driver.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1543.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "driver_loaded",
+        "ignore_case": true
+      },
+      {
+        "field": "driver.path",
+        "operator": "exists",
+        "value": true,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-036",
+    "name": "Windows · User temp DLL load",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: image_loaded; evidence: dll.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1574.002"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "image_loaded",
+        "ignore_case": true
+      },
+      {
+        "field": "dll.path",
+        "operator": "contains",
+        "value": "\\AppData\\Local\\Temp\\",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-037",
+    "name": "Windows · Script host network",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: process.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "process.name",
+        "operator": "in",
+        "value": [
+          "wscript.exe",
+          "cscript.exe"
+        ],
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-038",
+    "name": "Windows · Office network connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: process.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "process.name",
+        "operator": "in",
+        "value": [
+          "winword.exe",
+          "excel.exe",
+          "powerpnt.exe"
+        ],
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-039",
+    "name": "Windows · PowerShell network connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: process.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "process.name",
+        "operator": "equals",
+        "value": "powershell.exe",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-040",
+    "name": "Windows · Rundll32 network connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: process.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1218.011"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "process.name",
+        "operator": "equals",
+        "value": "rundll32.exe",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-041",
+    "name": "Windows · Regsvr32 network connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: process.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1218.010"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "process.name",
+        "operator": "equals",
+        "value": "regsvr32.exe",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-042",
+    "name": "Windows · DNS dynamic DNS domain",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: dns_query; evidence: dns.question.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "dns_query",
+        "ignore_case": true
+      },
+      {
+        "field": "dns.question.name",
+        "operator": "contains",
+        "value": ".duckdns.org",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-043",
+    "name": "Windows · DNS Tor resolver",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: dns_query; evidence: dns.question.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1090.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "dns_query",
+        "ignore_case": true
+      },
+      {
+        "field": "dns.question.name",
+        "operator": "contains",
+        "value": ".onion",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-044",
+    "name": "Windows · RDP port connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1021.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "equals",
+        "value": 3389,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-045",
+    "name": "Windows · SMB port connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1021.002"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "equals",
+        "value": 445,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-046",
+    "name": "Windows · WinRM port connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1021.006"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "in",
+        "value": [
+          5985,
+          5986
+        ],
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-047",
+    "name": "Windows · Defender malware detection",
+    "description": "Observed with current agent; tune for production. OS: windows; action: defender_detection; evidence: event.action.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "defender_detection",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "defender_detection",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-048",
+    "name": "Windows · Windows firewall block",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: connection_blocked; evidence: event.code.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1071"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "connection_blocked",
+        "ignore_case": true
+      },
+      {
+        "field": "event.code",
+        "operator": "equals",
+        "value": 5157,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-049",
+    "name": "Windows · Sensitive file deletion",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: file_deleted; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1070.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_deleted",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "contains",
+        "value": "\\Windows\\System32\\winevt\\Logs\\",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-WIN-050",
+    "name": "Windows · New process with CMD parent",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: windows; action: process_created; evidence: process.parent.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1059.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "windows",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.parent.name",
+        "operator": "equals",
+        "value": "cmd.exe",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-001",
+    "name": "Linux · Curl shell pipe",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "curl ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-002",
+    "name": "Linux · Wget shell pipe",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "wget ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-003",
+    "name": "Linux · Bash base64 decode",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1140"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "base64 -d",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-004",
+    "name": "Linux · Python inline code",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1059.006"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "python3 -c",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-005",
+    "name": "Linux · Perl inline code",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1059.006"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "perl -e",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-006",
+    "name": "Linux · Netcat exec option",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "nc -e",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-007",
+    "name": "Linux · Bash TCP redirection",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "/dev/tcp/",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-008",
+    "name": "Linux · History disable",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1070.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "HISTFILE=/dev/null",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-009",
+    "name": "Linux · History clear",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1070.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "history -c",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-010",
+    "name": "Linux · Auditctl disable",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "auditctl -e 0",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-011",
+    "name": "Linux · Systemctl stop auditd",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "stop auditd",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-012",
+    "name": "Linux · Systemctl stop agent",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "stop aegis-agent",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-013",
+    "name": "Linux · Chattr immutable removal",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1222.002"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "chattr -i",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-014",
+    "name": "Linux · Sudoers direct edit",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1548.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "/etc/sudoers",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-015",
+    "name": "Linux · Crontab install",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1053.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "crontab ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-016",
+    "name": "Linux · Systemd enable service",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1543.002"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "systemctl enable",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-017",
+    "name": "Linux · Useradd account",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1136.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "useradd ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-018",
+    "name": "Linux · Passwd root change",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1098"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "passwd root",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-019",
+    "name": "Linux · SSH authorized keys edit",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1098.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "authorized_keys",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-020",
+    "name": "Linux · SSH config edit",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1098"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "sshd_config",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-021",
+    "name": "Linux · Kernel module insmod",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1014"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "insmod ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-022",
+    "name": "Linux · Kernel module modprobe",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1014"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "modprobe ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-023",
+    "name": "Linux · Kernel module rmmod",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "rmmod ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-024",
+    "name": "Linux · PTrace strace attach",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1055"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "strace -p",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-025",
+    "name": "Linux · PTrace gdb attach",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1055"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "gdb -p",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-026",
+    "name": "Linux · Process memory dump",
+    "description": "Observed with current agent; tune for production. OS: linux; action: process_created; evidence: process.command_line.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      },
+      {
+        "field": "process.command_line",
+        "operator": "contains",
+        "value": "gcore ",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-027",
+    "name": "Linux · Proc mem access",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_accessed; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1055"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_accessed",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "contains",
+        "value": "/proc/",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-028",
+    "name": "Linux · LD preload edit",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1574.006"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "equals",
+        "value": "/etc/ld.so.preload",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-029",
+    "name": "Linux · Cron directory write",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1053.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "startswith",
+        "value": "/etc/cron.",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-030",
+    "name": "Linux · Systemd unit write",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1543.002"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "contains",
+        "value": "/systemd/system/",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-031",
+    "name": "Linux · SSH authorized keys write",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1098.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "endswith",
+        "value": "authorized_keys",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-032",
+    "name": "Linux · Sudoers write",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1548.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "startswith",
+        "value": "/etc/sudoers",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-033",
+    "name": "Linux · Passwd file modification",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1136.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "equals",
+        "value": "/etc/passwd",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-034",
+    "name": "Linux · Shadow file access",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_accessed; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1003.008"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_accessed",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "equals",
+        "value": "/etc/shadow",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-035",
+    "name": "Linux · Shell profile write",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_created; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1546.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_created",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "endswith",
+        "value": ".bashrc",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-036",
+    "name": "Linux · Tmp executable mapping",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: image_loaded; evidence: dll.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1574.006"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "image_loaded",
+        "ignore_case": true
+      },
+      {
+        "field": "dll.path",
+        "operator": "startswith",
+        "value": "/tmp/",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-037",
+    "name": "Linux · Kernel module init",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: driver_loaded; evidence: driver.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1014"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "driver_loaded",
+        "ignore_case": true
+      },
+      {
+        "field": "driver.path",
+        "operator": "exists",
+        "value": true,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-038",
+    "name": "Linux · PTrace attach",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: process_accessed; evidence: process.access.mask.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1055"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_accessed",
+        "ignore_case": true
+      },
+      {
+        "field": "process.access.mask",
+        "operator": "contains",
+        "value": "ATTACH",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-039",
+    "name": "Linux · Process VM write",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: process_tampered; evidence: process.tamper.type.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1055"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_tampered",
+        "ignore_case": true
+      },
+      {
+        "field": "process.tamper.type",
+        "operator": "equals",
+        "value": "process_vm_writev",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-040",
+    "name": "Linux · External SSH connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1021.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "equals",
+        "value": 22,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-041",
+    "name": "Linux · External SMTP connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1048.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "equals",
+        "value": 25,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-042",
+    "name": "Linux · External RDP connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1021.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "equals",
+        "value": 3389,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-043",
+    "name": "Linux · Database MySQL connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1046"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "equals",
+        "value": 3306,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-044",
+    "name": "Linux · Database Postgres connection",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: network_connection; evidence: destination.port.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1046"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.port",
+        "operator": "equals",
+        "value": 5432,
+        "ignore_case": false
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-045",
+    "name": "Linux · Container socket access",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_accessed; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1611"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_accessed",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "equals",
+        "value": "/var/run/docker.sock",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-046",
+    "name": "Linux · Kubeconfig access",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: file_accessed; evidence: file.path.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1552.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_accessed",
+        "ignore_case": true
+      },
+      {
+        "field": "file.path",
+        "operator": "endswith",
+        "value": ".kube/config",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-047",
+    "name": "Linux · Cloud metadata request",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: network_connection; evidence: destination.ip.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1552.005"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "network_connection",
+        "ignore_case": true
+      },
+      {
+        "field": "destination.ip",
+        "operator": "equals",
+        "value": "169.254.169.254",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-048",
+    "name": "Linux · DNS dynamic domain",
+    "description": "Requires validated Sysmon/audit/eBPF sensor coverage; disabled until available. OS: linux; action: dns_query; evidence: dns.question.name.",
+    "kind": "threshold",
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 1
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "dns_query",
+        "ignore_case": true
+      },
+      {
+        "field": "dns.question.name",
+        "operator": "contains",
+        "value": ".duckdns.org",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-049",
+    "name": "Linux · SSH repeated login failure",
+    "description": "Observed with current agent; tune for production. OS: linux; action: failed_logon; evidence: event.action.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1110"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "failed_logon",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "failed_logon",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LNX-050",
+    "name": "Linux · Sudo authentication failure",
+    "description": "Observed with current agent; tune for production. OS: linux; action: sudo_auth_failure; evidence: event.action.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1548.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.os.type",
+        "operator": "equals",
+        "value": "linux",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "sudo_auth_failure",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "sudo_auth_failure",
+        "ignore_case": true
+      }
+    ]
+  }
+]

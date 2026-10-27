@@ -1,0 +1,14 @@
+xSERA
+Copyright 2026 the xSERA contributors.
+
+Project-authored source and the owner-confirmed original XDR_V2 rule packs
+are distributed under Apache License 2.0. Third-party components retain
+their own licenses and notices; see THIRD_PARTY_NOTICES.md and the
+component-specific license files.
+
+The project owner confirmed copyright and redistribution rights for the
+original 950-rule XDR_V2 catalog and AEGIS/XDR_V2 agent source, and selected Apache-2.0 source distribution
+on 2026-10-16. This is an owner declaration, not an independent rights audit.
+
+This distribution does not grant rights in third-party trademarks or
+endorsement by MITRE, Microsoft, SigmaHQ, Mandiant, or rule authors.

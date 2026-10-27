@@ -1,0 +1,5 @@
+/* UI affordances only; the API independently enforces every permission. */
+body[data-role="viewer"] #finding-form,
+body[data-role="viewer"] [data-rule] {
+  display: none;
+}

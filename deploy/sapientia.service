@@ -1,0 +1,31 @@
+[Unit]
+Description=Vatex LUMINA xSERA
+After=network.target
+
+[Service]
+Type=simple
+User=sapientia
+Group=sapientia
+WorkingDirectory=/opt/vatex/lumina-xsera
+Environment=SAPIENTIA_BLOCK_NATIVE_RESPONSE=1
+StateDirectory=vatex-lumina-xsera
+StateDirectoryMode=0700
+ExecStart=/opt/vatex/lumina-xsera/.venv/bin/python -m sapientia --data /var/lib/vatex-lumina-xsera serve --host 127.0.0.1 --port 8787
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=70
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/vatex-lumina-xsera
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

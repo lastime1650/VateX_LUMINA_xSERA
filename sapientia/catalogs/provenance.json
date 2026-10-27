@@ -1,0 +1,117 @@
+{
+  "schema": "sapientia.catalog-provenance.v2",
+  "source_project": "User-supplied XDR_V2, read-only integration",
+  "imported_date": "2026-10-08",
+  "rule_license": "Apache-2.0 for the original 950 XDR_V2 rules, based on the direct rights-holder declaration recorded below. MITRE and other third-party materials retain their own terms.",
+  "mitre_license": "LICENSE-MITRE.txt",
+  "files": [
+    {
+      "source": "examples/endpoint_rules_100.json",
+      "file": "endpoint_rules_100.json",
+      "sha256": "47ad97d2fd547b74000b34112f339c35deb873a9ee6d5ddea55afde8ca3ee2d3",
+      "bytes": 98486,
+      "license": "Apache-2.0",
+      "rights_basis": "rights_declaration"
+    },
+    {
+      "source": "examples/endpoint_rules_additional_200.json",
+      "file": "endpoint_rules_additional_200.json",
+      "sha256": "e2b4ba07aaef81fafcba5d8ff7832354371a11189534a45fc29310f9b8846f7e",
+      "bytes": 196757,
+      "license": "Apache-2.0",
+      "rights_basis": "rights_declaration"
+    },
+    {
+      "source": "examples/endpoint_rules_expansion_600.json",
+      "file": "endpoint_rules_expansion_600.json",
+      "sha256": "62fb0802c0cf2dced44bd1bdc5ef7d2b535106dad6818374adad90bcea27d8fa",
+      "bytes": 634813,
+      "license": "Apache-2.0",
+      "rights_basis": "rights_declaration"
+    },
+    {
+      "source": "examples/test_agent/rules_lab_50.json",
+      "file": "rules_lab_50.json",
+      "sha256": "49f502893254f859c98677938947f8d09e403a9491a5e59c178b00adccaf1ee4",
+      "bytes": 72355,
+      "license": "Apache-2.0",
+      "rights_basis": "rights_declaration"
+    },
+    {
+      "source": "attack_catalog/enterprise-v19.2.json",
+      "file": "enterprise-v19.2.json",
+      "sha256": "266a86e23222abdba04284e9a565e4a5b01a1b50cf7e7dad26acab3043cd5db1",
+      "bytes": 1748520
+    },
+    {
+      "source": "attack_catalog/LICENSE-MITRE.txt",
+      "file": "LICENSE-MITRE.txt",
+      "sha256": "738144f7fb054722a4ef9d3367c51710341dc12fc574c6ac3a41daaaecd8bf5e",
+      "bytes": 1354
+    },
+    {
+      "source": "xSERA project-authored causal hypotheses",
+      "file": "endpoint_behavior_curated_12.json",
+      "sha256": "7eb202c37e1212ce37d7be92592aed28b353a46cf9d735681a391878ab1dc97c",
+      "bytes": 24423,
+      "origin": "xsera-curated",
+      "qualification": "unqualified",
+      "license_note": "Project-authored content under Apache-2.0; third-party content remains under its original terms.",
+      "license": "Apache-2.0"
+    }
+  ],
+  "official_sources": [
+    {
+      "url": "https://attack.mitre.org/resources/attack-data-and-tools/",
+      "accessed_date": "2026-10-08",
+      "note": "Official versioned STIX data and current release."
+    },
+    {
+      "url": "https://attack.mitre.org/resources/versions/",
+      "accessed_date": "2026-10-08",
+      "note": "Version19.2 current release confirmed."
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/LICENSE.txt",
+      "accessed_date": "2026-10-08",
+      "note": "MITRE license retained in full."
+    }
+  ],
+  "generators_not_executed": [
+    {
+      "source": "examples/endpoint_rule_pack.py",
+      "sha256": "0a62ba8eee657aa2a28642bccbcb5ec9b11cd356260d265bd6cd46100bfbf933"
+    },
+    {
+      "source": "examples/endpoint_rule_pack_additional.py",
+      "sha256": "45f4fdd77280b6c8d801b07ccfe2f3d41e31ced56dbb68753542197c1219bc53"
+    },
+    {
+      "source": "examples/endpoint_rule_pack_600.py",
+      "sha256": "235e5095071205e48b52ebac1457510d98202eeefe8765d883d431892678fc14"
+    }
+  ],
+  "rule_license_history": [
+    {
+      "recorded_date": "2026-10-08",
+      "note": "No separate rule-pack license located in supplied project; user-authorized local integration, no third-party open-source license assertion.",
+      "status": "historical_initial_import_record"
+    }
+  ],
+  "rights_declaration": {
+    "recorded_date": "2026-10-16",
+    "declared_by": "Human project user in the current Codex conversation",
+    "evidence_kind": "direct_human_rights_holder_declaration",
+    "statement": "The user explicitly states ownership of copyright and redistribution rights for the original 950 XDR_V2 rules, requests entire-source open distribution, and selects Apache-2.0 for project-owned source and these rules.",
+    "scope_files": [
+      "endpoint_rules_100.json",
+      "endpoint_rules_additional_200.json",
+      "endpoint_rules_expansion_600.json",
+      "rules_lab_50.json"
+    ],
+    "rule_count": 950,
+    "license": "Apache-2.0",
+    "independently_verified": false,
+    "qualification": "Records the rights-holder declaration; not an independent title investigation or legal clearance. Third-party materials are excluded from this relicensing statement."
+  }
+}

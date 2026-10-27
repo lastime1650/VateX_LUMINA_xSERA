@@ -1,0 +1,111 @@
+REVIEWED CPU V2 MULTI-HORIZON ANALYSIS AND EVALUATION
+
+Compatibility
+Existing /api/research/train clients default to the original v1 fusion. Existing
+0.17 CE and 0.18 v1 model weights, 24 features, gate contracts and approvals are
+preserved. Choose gate_version="v2", or /api/research/v2/train, explicitly. Old
+models are not silently relabelled or upgraded. A v2 implementation change needs
+new training and independent review. This is original engineering, not a paper's
+GNN or benchmark reproduction.
+
+Model and decisions
+V2 trains a real PyTorch CPU-only class-balanced 64 -> 32 -> 16 -> 7 relation
+classifier, AdamW, clipped gradients, 1..3 distinct seeds, up to 120 epochs. The
+64 bounded features include the old action-free 24, process semantic roles,
+target types, hashed command/image trigrams and explicit command/identity flags.
+Host names, IDs, scenario labels and family/campaign metadata are excluded.
+The observed action supplies the relation target, not an input feature.
+
+The frozen normal baseline contains role-conditioned action/target counts,
+same-incarnation transition counts and normal log-gap medians. Runtime never
+updates baseline, weights or calibration. CE, temporal novelty/rarity/gap and
+multi-horizon distribution distance are divided by normal holdout calibration,
+capped at four. Final score = max(max(component), .55 * sum(component)); the
+normal holdout maximum plus a margin sets the final threshold. These numbers
+are anomaly scores, never malware probabilities.
+
+Long evidence
+Automatic inference retains at most 4096 admitted original references per model
+for seven reported-time days and eight receipt-time days. Each inference selects
+at most 1024 raw originals / 8 MiB, including short current/context inputs, using
+a deterministic time-stratified sample under pressure. Windows are 1h, 24h and
+7d; each needs at least eight observed originals and normal role support. The
+24h and 7d windows additionally need observed spans of half their horizons.
+This is observed evidence coverage; sensor completeness is never attested.
+Two independent 256-bin sketch rows expose collision diagnostics. Exact
+canonical semantic pattern counts determine authoritative distance, preventing
+a hash collision from silently merging behaviour. At most one authenticated
+future-watermark raw original per host preserves late-event suppression; future
+reported timestamps never supply positive per-current window support.
+
+Short run event_ids remain <=32. run.long_evidence pins an immutable manifest
+{snapshot_id,digest,count,indexes}; publication re-reads every selected original,
+receipt, source epoch and current ACL and replays CPU/fusion decisions. The
+common signal/Case path uses full ancestry, including old originals outside the
+short32, so old context cannot count as independent corroboration. Manual runs
+do not populate the automatic cache. Retiring a model releases its cache only;
+Case/live-anomaly/legal-hold originals and immutable evidence remain protected.
+Routine normal/shadow snapshot details compact after 24h or 128 newer details.
+Archived details cannot be republished; permanent manifest hashes remain.
+
+Evaluation and field import
+POST /api/research/evaluation/datasets takes explicit labelled scenario original
+references, not arbitrary prediction features. Source intake must already have
+admitted each original with source authority. origin is synthetic or field_import;
+the latter is the curator's declaration, not independently verified capture.
+Each scenario declares split, family, campaign, normal/attack label, original IDs
+and observation duration. Train/validation must be curated normal. IDs, stable
+source/device hosts, family/campaign IDs must be split-disjoint and chronology
+must satisfy train < validation < test. Feature/content overlap and repeated
+normal background are separately measured. Renamed family identifiers do not
+prove semantic family independence. The saved manifest is immutable and pinned.
+
+POST /api/research/evaluation/runs {dataset_id,model_id} requires exact equality
+with the model's frozen training/validation IDs. Test labels never tune the
+threshold. Real CPU inference yields scenario TP/FP/FN/TN, Wilson95 precision,
+recall and FPR, plus CE-only and omitted-component ablations without retraining.
+FP scenarios per declared normal host-day use the union of observation intervals
+per authenticated host. Poisson interval assumptions and curator-declared,
+unattested exposure are explicit. Synthetic confidence intervals describe these
+scenario trials, not clinical/statistical proof of independent field traffic.
+Evaluation cannot publish signals or mutate live cache/baseline/model state.
+
+Admin POST /api/research/evaluation/synthetic {scenario_count:1000..1400,seed}
+builds safe text-only simulated originals through a dedicated registered source.
+The 1200 default contains 240 normal training scenarios (960 events), 60 normal
+validation scenarios (240), and 900 heldout scenarios (10800 events, 450 attacks).
+Separate tool variants, command profiles, target types, cadences and host/family/
+campaign/time splits cover relation mismatch, cadence, action-ratio change and
+multi-day low-and-slow mechanisms. This deliberately curated corpus is not an
+independent threat-feed corpus and supplies no field detection-rate guarantee.
+Datasets max32, scenarios max2048/dataset, originals max16384 / 64 MiB, evaluation
+runs max128/tenant. Explicit capacity errors prevent silent truncation.
+Independent POST /api/research/evaluation/datasets/{id}/archive or
+/runs/{id}/archive with {reason} releases only that dataset's own raw references
+after checking legal hold, Case/bookmark, active/pending model and live candidate
+dependencies. Creators cannot approve their own archival. Original manifest/run
+hashes, full original proof metadata and immutable archive summaries remain;
+archived rows no longer consume the 32/128 active capacity. Historical reads
+identify archived data; new evaluation or replacement cannot reuse it. Other
+model/Case references and physical original rows are never deleted by archival.
+An implementation-incompatible model can still be explicitly disabled and
+independently retired after canonical stored hash/current full-scope checks;
+inference and approving that incompatible model remain prohibited.
+
+Drift and replacement
+Three anomalous runs among five recent live v2 runs create a score-pressure
+notice awaiting normal evidence. Duplicate run IDs do not count twice. This is
+not confirmation of benign drift and never labels/learns anomalies automatically.
+An analyst supplies an immutable independently split normal dataset, runs real
+CPU training and holdout evaluation, then another authorized reviewer approves
+the exact candidate/model/data/evaluation hashes, mode and explicit P/R/FPR
+acceptance thresholds. A separate explicit promotion atomically disables the
+old epoch and activates the reviewed candidate; independent rollback restores
+the old reviewed weights with a new approval epoch. Stale revisions, revoked
+sources/reviewers and changed hashes fail closed. Large raw reads occur before
+the write transaction; every receipt/source/ACL and pin is rechecked at commit.
+
+Limits
+No actual field dataset was supplied for this implementation. Field accuracy,
+enterprise scale, sensor completeness, adversarial concept-drift robustness and
+multi-week soak behaviour remain unverified. No endpoint blocking is executed.

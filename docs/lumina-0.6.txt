@@ -1,0 +1,46 @@
+Vatex LUMINA xSERA 0.6 운영 안내
+
+정식 제품명: Vatex LUMINA xSERA
+분류: Extended Security Evidence, Response & Automation
+운영 디렉터리: C:\Vatex_LUMINA_xSERA
+운영 콘솔: http://127.0.0.1:8787/
+
+탐지 라이브러리
+XDR_V2의 950개 시작 템플릿과 ATT&CK Enterprise19.2 카탈로그를 포함합니다.
+템플릿의 조건·단계 시간·플랫폼·기술과 변환 안내를 검토하고 허용된 인덱스를 선택해 가져옵니다. 처음에는 항상 비활성입니다. 해당 환경의 로그로 미리 보기·튜닝 후 기존 탐지 정책 화면에서 활성화합니다. 테넌트의 기존 총 200개 정책 한도(활성·비활성 포함)를 유지합니다. 950개를 한꺼번에 실행한 성능 검증은 아닙니다.
+원본의 Unicode casefold/형식 비교 및 스트리밍 후보·쿨다운 처리와 변환 프로필의 차이는 rule-templates-attack.txt에 있습니다. 모호한 조건을 임의로 삭제하거나 자동 활성화하지 않습니다.
+
+Case 조사
+위협점수 = min(100,max(0,모든 허가된 케이스 기여의 최대 가중치)).
+심각도 = 모든 허가된 기여의 최대 유효 심각도.
+이 값은 정책 근거의 우선순위이며 MITRE가 제공한 심각도·공격 성공 확률이 아닙니다. 매트릭스는 카탈로그 참조와 실제 케이스에서 발견한 기술을 구분합니다. 일부 오래된 기술 태그는 폐기/철회 표시를 유지합니다.
+
+Manual → Response → Agent
+1. 케이스에서 수동 대응 탭을 열고 근거에 포함된 등록 장비를 선택합니다.
+2. 일회 프로세스 종료 또는 파일 삭제를 선택합니다. 대상과 이유를 검토한 뒤 확인합니다.
+3. 프로세스는 GUID/PID/OS 시작 식별자가 필요합니다. 파일은 절대 정규 경로와 SHA-256이 필요합니다. 대상이 바뀌거나 케이스 버전·권한이 바뀌면 거부됩니다.
+4. 장비가 TLS로 명령을 poll하고 서명을 검증합니다. 실행 전 서버 ACK를 받고 로컬 허용 목록과 실제 OS 대상을 다시 확인합니다.
+5. 결과 화면에서 queued/claimed/started/succeeded/failed/unknown/expired/cancelled를 확인합니다. succeeded는 인증된 장비가 실제 OS 효과를 확인했다고 보고한 상태이며 독립 하드웨어 검증은 아닙니다.
+6. started 이후에는 취소가 진행 중인 OS 효과를 되돌리지 못합니다. 실행 도중 장애로 결과가 불확실하면 unknown으로 유지하며 자동 재실행하지 않습니다.
+
+장비 측 실행
+기본값은 대응 실행 OFF입니다. 내려받은 에이전트의 README.txt와 로컬 response-policy CLI 안내를 따라 관리자/root 권한으로 정확한 실행 파일 및 전용 파일 루트를 허용합니다. 광범위한 시스템 경로·홈·에이전트 설치 폴더는 허용하지 않습니다. 소스 ZIP은 Python3.10+가 별도로 필요합니다.
+프로세스 종료는 일회 동작입니다. 재실행 차단 정책·네트워크 격리·원격 셸·자율 치료가 아닙니다. 삭제는 되돌릴 수 없으므로 GUI에서 구체적인 파일 경로와 해시를 확인합니다.
+
+FortiGate 수입
+POST /api/fortigate/intake {index,events:[{id,log}]}.
+현재 테넌트·역할·인덱스·파서 라우트 권한을 재검사합니다. 원문은 bounded key=value이며 중복 필드, 잘못된 IP/시간/숫자는 거부합니다. eventtime은 초 또는 정수 나노초, 또는 timezone이 있는 date/time/tz를 지원합니다. 장비 관리 event를 network_connection으로 잘못 분류하지 않습니다.
+물리 FortiGate 연동 계정·방화벽 정책 변경 API를 구현했다는 의미는 아닙니다. 이 릴리스는 수집·정규화·상관분석과 에이전트 대응을 연결합니다.
+
+시험
+격리 API TLS8788 / GUI HTTP8790. 매번 새 private 저장소를 만들고 1,000건을 전송합니다. 합성 로그는 실제 공격이 아닙니다. 종료 대상은 시험 도구가 직접 생성한 무해한 Python sleep 자식 프로세스, 삭제 대상은 시험 전용 표시 루트에 생성한 불활성 텍스트 파일입니다. 다른 운영 프로세스·파일을 시험하지 않습니다. Linux 소스 런타임 수입·인증은 확인하지만 native Linux OS 종료/삭제 시험은 별도로 필요합니다.
+
+이름 전환과 호환성
+공개 제품·화면·배포 이름은 Vatex LUMINA xSERA입니다. 내부 sapientia 모듈, 기존 SAPIENTIA_* 환경 변수, NATS subject/암호화 magic·MFA 키 유도 도메인·세션 cookie는 데이터와 배포 호환성을 위해 유지합니다. 감사 기록·예전 백업의 원본 이름은 검증 증거이므로 다시 쓰지 않습니다.
+폴더 이동 뒤 이전 editable install의 절대 경로를 새 wheel 설치로 갱신하거나 제거해야 합니다. start.ps1은 자신의 경로에서 모듈을 실행합니다. 운영 HTTPS 주소·공개 CA를 구성하지 않은 HTTP8787에서는 공통 ZIP 다운로드만 가능하고 새 장비 등록은 비활성입니다.
+
+근거 자료
+MITRE ATT&CK 데이터/도구: https://attack.mitre.org/resources/working-with-attack/
+MITRE 사용 조건: https://attack.mitre.org/resources/terms-of-use/
+FortiGate 공식 로그 필드: https://docs.fortinet.com/document/fortigate/7.0.0/fortios-log-message-reference/357866/log-message-fields
+FortiOS 7.6.5 공식 로그 예: https://docs.fortinet.com/document/fortigate/7.6.5/administration-guide/986892/sample-logs-by-log-type

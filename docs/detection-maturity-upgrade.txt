@@ -1,0 +1,91 @@
+xSERA 탐지 네 기준 코드 개선 계약
+2026-10-13 / backend-only / 실제 센서·실전 공격 시험 없음
+
+목표는 엔티티/신원 결합, 상관 시퀀스, 행위/UEBA, 오탐/Case 품질의 기능과 연결을
+개선하고 각 기준의 회귀를 수행하는 것이다. 기존 4.5점 등급에는 실제 여러 제품·
+OS·정상/공격·부하/장애의 효과 증거도 필요하므로 코드/합성 회귀 통과만으로
+실전 성숙도 4.5점을 선언하지 않는다. 최종 실행 결과는 별도 보고서의 hash에 묶는다.
+
+1. 신원과 원본
+security_schema v3에는 process parent, auth UID/session, cloud account/principal/
+session/issuer를 추가했다. identity_resolver의 mode는 flow, bidirectional_flow,
+process, parent_process, auth_session, cloud_session, approved_entity, approved_nat.
+기본 flow 계약은 유지한다. process는 source/account/realm/GUID/start로 묶어
+PID/GUID 단독 재사용을 피한다. cloud는 계정/principal/session/issuer를 함께 묶는다.
+parent는 같은 source/account/realm의 명시적 parent GUID edge만 사용하고 반복 GUID
+순환을 거절한다. 관측이 비어 있으면 결합하지 않는다.
+NAT는 현재 권한·entity revision·validity·정확한 original/translated tuple을
+검증한 analyst-approved binding만 사용한다. overlap은 선택하지 않는다.
+로그 보고자의 주장과 실제 인과관계·장비 실행 권한은 구분한다. 새 결합도 native
+capture/automatic endpoint authorization을 참으로 만들지 않는다.
+
+credential-bound native endpoint 영수증을 source receipt에 연결하고 indexed ACK
+hook에서 공통 projection을 생성한다. generic import를 native receipt로 승격하지
+않는다. native source의 정수 revision과 agent software version 문자열은 분리한다.
+소스 revoke/rebind는 자동 복구하지 않으며 등록된 현재 출처 변경은 plan 재검토가
+필요하다. 이미 저장한 구형 projection 전체의 자동 schema 재투영은 수행하지 않는다.
+실제 업그레이드/과거 자료의 재투영은 별도 효과 검증 대상이다.
+
+2. 상관과 시퀀스
+POST/PUT /api/v2/correlations는 기존 fields에 relation, ordered, clock_policy를
+선택적으로 받는다. 기본 ordered=false, relation=flow, clock_policy=reported.
+ordered=true는 stage 역할의 사건 시각 순서를 검사한다. strict는 보고 precision의
+불확실성 구간이 겹치거나 precision이 없으면 order_or_clock_uncertain으로 거절한다.
+이는 시계 동기화의 독립 증명은 아니다. 같은 flow 결합을 일반 causal sequence로
+자동 바꾸지 않는다. min_count/max_count는 각 role의 양성 cardinality이며 모든
+role의 최대 원본 참조 합계는 32다(기존 원본/Case 크기 계약). 누적 저장 개수 제한이
+아니다. 일반 NOT/absence는 관측 완전성이 없으면 참이라고 할 수 있어 추가하지 않았다.
+
+Case 증거에는 role별 original IDs, 원본 scalar context, full plan snapshot/hash,
+source/frontier/identity link와 uncertainty를 남긴다. projection 내용 hash와 원본
+receipt를 재검사한다. 단계별 missing/ambiguous/order/identity reason을 동일
+cursor transaction에서 journal하여 롤백/재시작이 진행과 진단을 함께 보존한다.
+matched 진단에는 emitter 결과를 함께 남겨 매치·Case 발행·억제 결과를 구분한다.
+GET /api/v2/correlations에서 scoped diagnostics count를 볼 수 있다.
+
+3. peer 행위 분석
+기존 behavior baseline에서 count_method=peer_robust_mad, peer_groups(명시적인
+entity→role mapping), peer_min_entities(기본 3)를 사용할 수 있다. 다른 role을
+global population에 섞지 않으며 대상 entity를 peer 학습 비교에서 뺀다. entity당
+immutable median으로 robust center/MAD를 만들고 review-required/cold-start
+peer를 제외한다. seasonality는 같은 slot의 ready peer만 사용한다.
+population 부족은 warmup 이유/분모로 기록한다. peer_volume에는 peer role/
+denominator/exclusion/threshold와 실제 평가 원본을 남긴다. 소수 outlier에 대한
+강건함은 악성 학습 오염 전체 배제나 보정된 malware probability가 아니다.
+신호는 기존 opt-in analysis scheduler→shared Case emitter에 연결한다. baseline은
+평가나 late arrival로 자동 변경하지 않는다. peer 역할은 endpoint 권한이 아니다.
+
+4. 오탐·Case·운영
+detector_ops의 공통 registry로 legacy/v2/analysis emitter에 기존 expiring peer-
+approved exception/storm governor를 적용한다. v2는 첫 Case 전에도 storm 정책을
+등록할 수 있고 disabled/superseded plan은 새 governance 권한을 주지 않는다.
+기존 저장소의 v2 plan/analysis schedule도 초기화 시 현재 선언으로 registry를
+멱등 등록한다. 새 analysis schedule은 첫 Case 전에 등록하며 비활성 schedule은
+정책 권한을 주지 않는다. 같은 revision 등록 시 원래 선언 scope를 확장하지 않는다.
+현재 사용자·owner scope, 전체 Case 증거, version·expiry·critical bypass는 유지한다.
+readiness가 v2 enabled/healthy/error 및 active source prereqs를 집계한다. 물리
+endpoint가 없는 registered-source-only 구성도 configured 상태와 qualification을
+구분한다. 준비됨은 certified가 아니다.
+
+records의 detectors/detector_diagnostics cursor/NDJSON 조회에는 누적 상한이 없다.
+diag는 현재 index scope로 제한된다. record pressure 정리는 이미 만들어진 Case
+외에도 active detector lookback/late recovery와 frozen pending window를 보호한다.
+saved search의 실행 창, 지연 재분석 cursor와 아직 ACK하지 않은 분할 분석 창도
+보호한다. 재분석 cursor가 오래되면 현재 시각의 horizon 밖 원본도 보호한다.
+관측 clock/projection이 없는 generic indexed original도 events_all로 재확인한다.
+보수적인 tenant 단위 보존선 때문에 회수 가능한 공간이 줄 수 있으며 이 경우 원본을
+무리하게 지우지 않고 기존 capacity blocked/backpressure 계약을 따른다.
+
+5. 회귀 환경과 한계
+새 회귀는 임시 Store/합성 원본·TestClient/가상 identity와 peer cohort를 사용한다.
+실제 로그 수집·호스트 격리·공격 코드·운영 DB 사용은 하지 않는다. pytest 임시
+디렉터리의 기본 용량은 deterministic 10 TiB/80% free 모델이고 개별 pressure
+시험은 별도로 override한다. 개발 호스트의 부족한 디스크가 기능 회귀 전체를
+무관한 admission failure로 만들지 않기 위한 시험 환경이다. 실제 disk/EPS 시험은 아니다.
+기존 1000행 fleet 조회 회귀는 사용자 요구로 바뀐 무제한 조회 계약에 맞춰 실제
+1002 agent/1003 deployment·scope·active 우선순위를 검증한다. 과거 실패 결과는
+삭제하지 않고 최종 hash의 결과와 구분한다.
+
+남은 검증: native OS/channel 포착과 시간·NAT/IdP/STS 운영, 장기 정상/미지 공격,
+학습 오염/peer 역할 운영, 최신 저장소·업그레이드/reprojection/HA·지속 부하.
+이 항목들은 합성 회귀만으로 통과했다고 표시하지 않는다.

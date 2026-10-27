@@ -1,0 +1,924 @@
+[
+  {
+    "id": "R-XSR-WIN-001",
+    "name": "Encoded PowerShell followed by network egress",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.001",
+      "T1105"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "powershell.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "-enc ",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "network_connection",
+              "ignore_case": true
+            },
+            {
+              "field": "destination.port",
+              "operator": "equals",
+              "value": 443,
+              "ignore_case": false
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-WIN-002",
+    "name": "PowerShell bypass followed by script write",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.001",
+      "T1105"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "powershell.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "bypass",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "file_created",
+              "ignore_case": true
+            },
+            {
+              "field": "file.path",
+              "operator": "endswith",
+              "value": ".ps1",
+              "ignore_case": true
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-WIN-003",
+    "name": "Certutil URL cache followed by executable write",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "certutil.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "urlcache",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "file_created",
+              "ignore_case": true
+            },
+            {
+              "field": "file.path",
+              "operator": "endswith",
+              "value": ".exe",
+              "ignore_case": true
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-WIN-004",
+    "name": "Rundll32 remote reference followed by network egress",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1218.011"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "rundll32.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "http",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "network_connection",
+              "ignore_case": true
+            },
+            {
+              "field": "destination.port",
+              "operator": "equals",
+              "value": 443,
+              "ignore_case": false
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-WIN-005",
+    "name": "Registry utility followed by Run key mutation",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1547.001"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "reg.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "add",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "registry_value_set",
+              "ignore_case": true
+            },
+            {
+              "field": "registry.path",
+              "operator": "contains",
+              "value": "\\CurrentVersion\\Run",
+              "ignore_case": true
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-WIN-006",
+    "name": "Shadow-copy removal command with successful termination",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1490"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "vssadmin.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "delete shadows",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_terminated",
+              "ignore_case": true
+            },
+            {
+              "field": "process.exit.code",
+              "operator": "equals",
+              "value": 0,
+              "ignore_case": false
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-WIN-007",
+    "name": "Remote WMI execution followed by network contact",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1047"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "wmic.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "/node:",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "network_connection",
+              "ignore_case": true
+            },
+            {
+              "field": "destination.port",
+              "operator": "equals",
+              "value": 445,
+              "ignore_case": false
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-WIN-008",
+    "name": "Locked-extension write followed by file deletion",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1486"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "windows",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "file_created",
+              "ignore_case": true
+            },
+            {
+              "field": "file.path",
+              "operator": "endswith",
+              "value": ".locked",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "file_deleted",
+              "ignore_case": true
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-LIN-009",
+    "name": "Shell download command followed by network egress",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.004",
+      "T1105"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "linux",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "bash",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "curl",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "network_connection",
+              "ignore_case": true
+            },
+            {
+              "field": "destination.port",
+              "operator": "equals",
+              "value": 443,
+              "ignore_case": false
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-LIN-010",
+    "name": "Permission utility followed by observed file access",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1222.002"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "linux",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "chmod",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "+x",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "file_accessed",
+              "ignore_case": true
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-LIN-011",
+    "name": "Systemctl enable followed by unit-file write",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1543.002"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "same_value",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "linux",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "systemctl",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "enable",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "file_created",
+              "ignore_case": true
+            },
+            {
+              "field": "file.path",
+              "operator": "startswith",
+              "value": "/etc/systemd/system/",
+              "ignore_case": true
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  },
+  {
+    "id": "R-XSR-LIN-012",
+    "name": "Shell download expression with causal curl child",
+    "description": "Project-authored causal hypothesis; dual-use activity may be benign. Requires joint field readiness and positive/benign fixtures; efficacy is unqualified.",
+    "origin": "xsera-curated",
+    "qualification": "unqualified",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": false,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.004",
+      "T1105"
+    ],
+    "window_seconds": 300,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "relation": {
+      "mode": "parent_guid",
+      "field": "raw.xdr.data.process.guid"
+    },
+    "stages": [
+      {
+        "id": "start",
+        "name": "start",
+        "match": {
+          "all": [
+            {
+              "field": "host.os.type",
+              "operator": "equals",
+              "value": "linux",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "bash",
+              "ignore_case": true
+            },
+            {
+              "field": "process.command_line",
+              "operator": "contains",
+              "value": "curl",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "followup",
+        "match": {
+          "all": [
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "curl",
+              "ignore_case": true
+            }
+          ]
+        },
+        "within_seconds": 120
+      }
+    ]
+  }
+]

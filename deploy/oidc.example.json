@@ -1,0 +1,11 @@
+{
+  "issuer": "https://login.example/siem",
+  "client_id": "sapientia-review-client",
+  "client_secret_env": "SAPIENTIA_OIDC_CLIENT_SECRET",
+  "redirect_uri": "https://siem.example:8787/api/sso/callback",
+  "subjects": {
+    "replace-with-provider-subject": "analyst_example"
+  },
+  "algorithms": ["RS256"],
+  "allow_loopback_http": false
+}

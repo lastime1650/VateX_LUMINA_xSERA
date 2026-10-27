@@ -1,0 +1,118 @@
+xSERA 0.19 Microsoft read-only audit collection
+
+The registered entra_signin and m365_audit sources can fetch vendor records,
+rather than requiring manual JSON upload. Collection is an explicit administrator
+operation. The source registry binds the tenant GUID, product, exact index,
+owner, realm, and environment credential reference. Current owner/caller scopes
+and the exact source version are checked before every network request and again
+before admission. Source revocation or a checkpoint race stops further admission.
+
+Configure the existing server-side credential_ref environment variable as a JSON
+object containing tenant_id, client_id, client_secret. Microsoft 365 additionally
+requires publisher_id, the publisher organization's tenant GUID. The tenant_id
+must match the registered source account exactly as a GUID. Unknown credential
+options, invalid GUIDs, or malformed/missing secrets are unavailable. The console
+and responses never return credential values, environment names, bearer tokens,
+OAuth response bodies, vendor error bodies, or arbitrary vendor error messages.
+Do not pass the cloud secret on a command line or through the console.
+
+OAuth uses the tenant-specific public Microsoft identity v2 token endpoint and
+client_credentials. Entra uses the Microsoft Graph .default resource scope;
+Office uses the manage.office.com .default resource scope. This collector does
+not decode unverified JWT claims or derive tenant authority from them. The
+configured tenant-specific HTTPS authority issues the token, and the protected
+vendor resource validates its authorization. Grant only the required read
+permissions: Graph AuditLog.Read.All or Office ActivityFeed.Read, as applicable,
+with the administrator consent and tenant licensing required by Microsoft.
+
+Graph reads only /v1.0/auditLogs/signIns with a UTC time filter, bounded $top, and
+validated pagination. Each original response record is wrapped with the pinned
+tenant before the existing enterprise adapter validates it. Conditional access
+properties omitted by the vendor remain absent; missing data is not invented.
+
+Office reads subscriptions/list, subscriptions/content, and contentUri audit blobs
+for an already enabled subscription. It never starts/stops a subscription,
+registers a webhook, changes a mailbox, or modifies a tenant. Missing/disabled
+subscriptions report subscription_required/unavailable. Content references must
+match the configured tenant, exact manage.office.com host/path, publisher and
+content ID. contentType defaults to Audit.Exchange in the optional CLI; the API
+requires an explicit allowed content type. Office content windows select when
+the content became available, not necessarily each enclosed event's timestamp.
+
+Security and coverage bounds
+
+Only the public Microsoft cloud is implemented. Sovereign/national cloud hosts,
+custom endpoints, arbitrary URLs, HTTP redirects and implicit environment proxies
+are not accepted. HTTPS uses standard certificate verification; there is no
+insecure option. Pagination stays on exact allowlisted API paths; changed query
+windows, external links, userinfo, unusual ports, fragments, encoded path tricks,
+publisher/tenant changes and cycles are rejected. Every response is limited to
+4 MiB and bounded reads; socket timeouts and an explicit 60-second collection
+budget stop prolonged work. Network DNS/TLS/individual I/O timeout scheduling can
+finish after the budget boundary; this is not a hard real-time deadline.
+
+Each call accepts at most 20 requests, 8 pages, 1,000 records, and a positive UTC
+window up to 24 hours. Office start must be within seven days; a small future
+clock tolerance is allowed. Overflow, rate limiting, unavailable permission,
+bad vendor records or unsafe pagination return complete:false and a distinct
+fixed reason. Narrow the requested time window when the bounded limit is reached.
+429 exposes a bounded retry delay and does not busy-wait or silently discard a
+page. Previously admitted batches remain durable after a later failure.
+
+Every complete vendor batch is decoded before connector_runtime.intake. That
+existing transaction writes admission/source receipts before advancing the
+optimistic checkpoint version. Event IDs derive from the product, tenant and
+vendor's stable record ID; replay cannot create duplicate source originals or
+attach a preexisting generic event to a different source. The stored cursor is
+an opaque digest of the requested window, page/blob identity and content, never
+a token-bearing nextLink. Calls restart their bounded requested window; the
+cursor is not a vendor resume URL or a certified global delivery watermark.
+durable_records counts durably referenced originals in this call, including
+replays; it is not a count of newly created originals or an EPS measurement.
+
+API
+
+GET /api/ops/enterprise/sources/{id}/collector
+  Authenticated read in the current source scope. Returns source_version,
+  checkpoint_version, available, a fixed reason and configured limits. Available
+  means credentials are structurally configured, not that the cloud was tested.
+
+POST /api/ops/enterprise/sources/{id}/collector/collect
+  Administrator only, with existing CSRF/session checks.
+  Exact body: {source_version,checkpoint_version,start,end,content_type}.
+  start/end are explicit UTC ISO timestamps. Entra content_type is null.
+  Returns status, reason, complete, requests/pages, fetched_records,
+  durable_records, admitted_batches, checkpoint_version and cursor_committed.
+  No endpoint command or native host effect is issued.
+
+cloud_live_tested remains false until independent live qualification is provided.
+live_vendor_attempted records a real default HTTPS transport call attempt;
+live_vendor_completed records completion of every page through that transport.
+Injected protocol fixtures explicitly identify themselves as protocol_fixture
+and set both live flags false. A missing credential makes zero network requests.
+
+Optional CLI
+
+tools/forward_enterprise_audit.py authenticates to xSERA using
+XSERA_AUDIT_USERNAME (or --username) and XSERA_AUDIT_PASSWORD. It calls the above
+status/collect routes and logs out. Cloud credentials stay on the server; the
+session cookie and CSRF token stay in memory. The default is one explicit query
+for the last hour. --start/--end specify a reviewed UTC window; --status-only
+performs no collection. HTTPS is required for a remote xSERA server, with literal
+loopback HTTP permitted for local testing. Responses print bounded status/counts.
+
+Validation
+
+The qualification uses disposable synthetic sources and injected Microsoft
+protocol fixtures, including actual authenticated xSERA HTTP admission. It
+checks receipts before the next page/blob, replay ID deduplication, current
+revocation, redirect/SSRF rejection, tenant/publisher binding, unavailable
+subscriptions, rate limiting, no secret echo, role separation and CLI session
+handling. No live Microsoft account or credential was available for this release;
+actual vendor authorization/tenant license/subscription delivery remain unverified.
+
+Official references inspected:
+https://learn.microsoft.com/en-us/graph/api/signin-list?view=graph-rest-1.0
+https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-client-creds-grant-flow
+https://learn.microsoft.com/en-us/office/office-365-management-api/office-365-management-activity-api-reference
+https://learn.microsoft.com/en-us/office/office-365-management-api/get-started-with-office-365-management-apis

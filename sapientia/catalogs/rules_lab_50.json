@@ -1,0 +1,2682 @@
+[
+  {
+    "id": "R-LAB-001",
+    "name": "LAB · PowerShell 실행 후 Defender 탐지",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "powershell.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "powershell.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "defender_detection 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "defender_detection",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-002",
+    "name": "LAB · PowerShell 실행 후 연결 차단",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "powershell.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "powershell.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "connection_blocked 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "connection_blocked",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-003",
+    "name": "LAB · PowerShell 실행 후 스크립트 작성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "powershell.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "powershell.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "script_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "script_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-004",
+    "name": "LAB · PowerShell 실행 후 외부 연결",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "powershell.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "powershell.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "connection_established 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "connection_established",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-005",
+    "name": "LAB · pwsh 실행 후 스크립트 작성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "pwsh.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "pwsh.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "script_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "script_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-006",
+    "name": "LAB · cmd 실행 후 자동실행 변경",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1547.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "cmd.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "cmd.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "autorun_key_changed 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "autorun_key_changed",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-007",
+    "name": "LAB · cmd 실행 후 서비스 설치",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1543.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "cmd.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "cmd.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "service_installed 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "service_installed",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-008",
+    "name": "LAB · wscript 실행 후 스크립트 작성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1059.005"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "wscript.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "wscript.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "script_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "script_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-009",
+    "name": "LAB · wscript 실행 후 자동실행 변경",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1547.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "wscript.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "wscript.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "autorun_key_changed 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "autorun_key_changed",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-010",
+    "name": "LAB · cscript 실행 후 레지스트리 변경",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1112"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "cscript.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "cscript.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "registry_value_modified 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "registry_value_modified",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-011",
+    "name": "LAB · rundll32 실행 후 외부 연결",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1218.011"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "rundll32.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "rundll32.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "connection_established 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "connection_established",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-012",
+    "name": "LAB · rundll32 실행 후 실행 파일 생성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1218.011"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "rundll32.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "rundll32.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "executable_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "executable_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-013",
+    "name": "LAB · regsvr32 실행 후 프록시 요청",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1218.010"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "regsvr32.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "regsvr32.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "proxy_request 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "proxy_request",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-014",
+    "name": "LAB · regsvr32 실행 후 보안 탐지",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1218.010"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "regsvr32.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "regsvr32.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "defender_detection 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "defender_detection",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-015",
+    "name": "LAB · schtasks 실행 후 예약 작업 생성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1053.005"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "schtasks.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "schtasks.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "task_created 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "task_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-016",
+    "name": "LAB · schtasks 실행 후 예약 작업 시작",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1053.005"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "schtasks.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "schtasks.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "task_started 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "task_started",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-017",
+    "name": "LAB · sc 실행 후 서비스 설치",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1543.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "sc.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "sc.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "service_installed 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "service_installed",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-018",
+    "name": "LAB · sc 실행 후 서비스 중지",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1489"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "sc.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "sc.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "service_stopped 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "service_stopped",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-019",
+    "name": "LAB · certutil 실행 후 실행 파일 생성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "certutil.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "certutil.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "executable_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "executable_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-020",
+    "name": "LAB · certutil 실행 후 프록시 요청",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "certutil.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "certutil.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "proxy_request 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "proxy_request",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-021",
+    "name": "LAB · curl 실행 후 압축 파일 생성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1560.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "curl.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "curl.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "archive_created 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "archive_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-022",
+    "name": "LAB · curl 실행 후 실행 파일 생성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "curl.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "curl.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "executable_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "executable_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-023",
+    "name": "LAB · wevtutil 실행 후 Defender 격리",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1070.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "wevtutil.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "wevtutil.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "defender_quarantine 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "defender_quarantine",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-024",
+    "name": "LAB · net 실행 후 인증 실패",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1087.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "net.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "net.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "failed_logon 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "failed_logon",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-025",
+    "name": "LAB · python 실행 후 스크립트 작성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1059.006"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "python.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "python.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "script_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "script_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-026",
+    "name": "LAB · python 실행 후 외부 연결",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1059.006"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "python.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "python.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "connection_established 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "connection_established",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-027",
+    "name": "LAB · 7z 실행 후 압축 파일 생성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1560.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "7z.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "7z.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "archive_created 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "archive_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-028",
+    "name": "LAB · 브라우저 실행 후 실행 파일 생성",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "msedge.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "msedge.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "executable_written 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "executable_written",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-029",
+    "name": "LAB · 브라우저 실행 후 프록시 요청",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "chrome.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "chrome.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "proxy_request 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "proxy_request",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-030",
+    "name": "LAB · 탐색기 실행 후 USB 연결",
+    "description": "합성 에이전트 호스트 전용 2단계 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "behavior",
+    "language_version": 2,
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1091"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "max_candidates_per_scope": 16,
+    "max_evidence": 10,
+    "timeout_action": "reset",
+    "exceptions": [],
+    "stages": [
+      {
+        "id": "start",
+        "name": "explorer.exe 실행",
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "process.name",
+              "operator": "equals",
+              "value": "explorer.exe",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "process_created",
+              "ignore_case": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "followup",
+        "name": "usb_attached 후속 행위",
+        "within_seconds": 120,
+        "match": {
+          "all": [
+            {
+              "field": "host.id",
+              "operator": "equals",
+              "value": "TEST-EDR-LAPTOP-GT90OM8N",
+              "ignore_case": true
+            },
+            {
+              "field": "event.action",
+              "operator": "equals",
+              "value": "usb_attached",
+              "ignore_case": true
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-031",
+    "name": "LAB · 인증 실패 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1110"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "failed_logon",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-032",
+    "name": "LAB · 원격 로그인 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1021"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "remote_logon",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-033",
+    "name": "LAB · 권한 부여 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1068"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "privilege_assigned",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-034",
+    "name": "LAB · 파일 삭제 급증",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1070.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 5
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "file_deleted",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-035",
+    "name": "LAB · 실행 파일 작성 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1105"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "executable_written",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-036",
+    "name": "LAB · 스크립트 작성 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1059.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "script_written",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-037",
+    "name": "LAB · 레지스트리 변경 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1112"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 4
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "registry_value_modified",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-038",
+    "name": "LAB · 자동실행 변경 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1547.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 2
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "autorun_key_changed",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-039",
+    "name": "LAB · DNS 질의 급증",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071.004"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 8
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "dns_query",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-040",
+    "name": "LAB · 연결 차단 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "connection_blocked",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-041",
+    "name": "LAB · 프록시 요청 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1090"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 5
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "proxy_request",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-042",
+    "name": "LAB · 서비스 중지 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1489"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "service_stopped",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-043",
+    "name": "LAB · 서비스 설치 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1543.003"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 2
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "service_installed",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-044",
+    "name": "LAB · 예약 작업 생성 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1053.005"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "task_created",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-045",
+    "name": "LAB · USB 연결 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "low",
+    "mitre": [
+      "T1091"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "usb_attached",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-046",
+    "name": "LAB · Defender 탐지 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "critical",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 2
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "defender_detection",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-047",
+    "name": "LAB · Defender 격리 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "high",
+    "mitre": [
+      "T1562.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 2
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "defender_quarantine",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-048",
+    "name": "LAB · 프로세스 생성 급증",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1059"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 12
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "process_created",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-049",
+    "name": "LAB · 압축 파일 작성 반복",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1560.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 3
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "archive_created",
+        "ignore_case": true
+      }
+    ]
+  },
+  {
+    "id": "R-LAB-050",
+    "name": "LAB · 외부 연결 급증",
+    "description": "합성 에이전트 호스트 전용 반복 횟수 검증 시나리오. 운영 배포 전 별도 튜닝 필요.",
+    "kind": "threshold",
+    "enabled": true,
+    "scope": "host.id",
+    "severity": "medium",
+    "mitre": [
+      "T1071.001"
+    ],
+    "window_seconds": 180,
+    "cooldown_seconds": 300,
+    "timeout_action": "reset",
+    "threshold": {
+      "count": 10
+    },
+    "conditions": [
+      {
+        "field": "host.id",
+        "operator": "equals",
+        "value": "TEST-EDR-LAPTOP-GT90OM8N",
+        "ignore_case": true
+      },
+      {
+        "field": "event.action",
+        "operator": "equals",
+        "value": "connection_established",
+        "ignore_case": true
+      }
+    ]
+  }
+]

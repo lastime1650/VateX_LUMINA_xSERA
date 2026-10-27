@@ -1,0 +1,129 @@
+xSERA 영구 Case 기록·전체 조회·용량 기반 로그 관리 계약
+2026-10-13 · 추가 요구 반영 · 회귀 실행 미실시
+
+1. 발견한 문제
+
+이전 incident_list의 SQL LIMIT 200은 저장 개수 제한이 아니라 최근 Case 목록의
+조회 한도였다. 202개 Case가 DB에 있어도 200개만 반환할 수 있었다. 이번 변경은
+해당 LIMIT를 제거한다. 기존 임의 기록 개수로 제한하던 메모·작업·북마크,
+플레이북과 실행·개정 이력, 등록 에이전트·배포, 대응 명령·방어 정책·파일 판정,
+신원·분석 baseline·콘텐츠·파서·조회 등 업무 inventory/history 상한도 제거한다.
+동일 원본 ID 충돌, 현재 권한, 승인·효과 멱등성 및 비밀 보호는 유지한다.
+
+기록과 메타데이터가 늘어나는 이유로 기존 내역을 삭제하거나 신규 Case 작성을
+거부하는 정책을 없앤다. source_monitor_runs는 최근 100개 외 삭제하던 동작을
+제거하고, analysis_history.retain은 전체 결과·receipt를 삭제하지 않는 호환
+hook으로 바꾼다. 유효한 pipeline event/case clock은 누적 개수로 생략하지 않는다.
+로컬 agent의 effect/quarantine/execution ledger도 누적 이력 개수 상한을 제거한다.
+
+2. 영구 보존
+
+Settings.retention_days 기본값 0. 0은 즉시 삭제가 아니라 영구 보존을 뜻한다.
+record_management_policy는 permanent=true, record_count_limit=null을 저장한다.
+permanent는 시간 만료가 없다는 뜻이다. 후속 사용자 요구에 따라 비보호 원본 로그는
+볼륨 용량 정책으로 자동 정리할 수 있다. Case·감사·분석·대응 이력은 계속 보존한다.
+현재 유한 일수의 기존 정책이 있어도 effective_policy의 retention_days는 0이며
+원본·receipt·projection을 나이 기준으로 자동 삭제하지 않는다. 인덱스별 정책은
+hot < warm < cold와 retention_days=0을 사용한다. 데이터는 기존 검증된 로컬
+DuckDB/Parquet tier와 SQLite control history, backup/archive adapter에 보존한다.
+warm/cold/archive 이동은 계속 가능하며 이동을 삭제로 취급하지 않는다.
+
+시작 시 이전 미완료 시간 만료 intent는 감사와 cancellation 기록을 남겨 취소한다.
+capacity_retention_intents에 등록된 용량 정리 intent는 취소하지 않고 재개한다.
+이미 물리적으로 삭제된 원본을 receipt만으로 복원했다고 표시하지 않는다.
+취소된 intent가 FTS 파생 삭제를 시작했다면 FTS를 bootstrap-required로 표시하여
+잘린 캐시를 완전한 검색 결과로 쓰지 않는다. 이 경우 기존 rebuild-fts 절차가 필요하다.
+이 변경은 제품 코드이며 실제 운영 data를 열거나 변경하지 않았다.
+
+명시적 조사 이력 prune API도 영구 보존에서 삭제를 거부한다. 인증 세션, 임시
+검색 cache/snapshot, 작업 동시 실행 lease의 만료는 보안·운영 상태 관리다.
+이들은 원본 로그·Case·감사·분석 결과의 영구 보존과 구분된다.
+
+3. 조회·내보내기
+
+GET /api/incidents: 허가된 Case 전체. 더 이상 200개 목록 ceiling이 없다.
+기존 Case workspace/export, feedback, 대응 이력, inventory 목록도 업무 개수
+ceiling과 잘림을 제거한다. 대량 내역에는 아래 cursor/stream 경로를 사용한다.
+
+GET /api/v2/records/{resource}?count=1000&cursor=TOKEN
+  기본 page_size는 1000. 다음 cursor가 없을 때만 complete=true다.
+  페이지 전송 단위에는 1..10000 row를 허용하며 전체 결과 수량에는 상한이 없다.
+  cursor는 resource/tenant/사용자/current index scope와 high-water rowid에 묶인다.
+  각 페이지에서 현재 권한과 해당 Case/원본 index/effect scope를 확인한다.
+  비허가 행을 건너뛰어도 스캔 cursor는 전진하므로 전체 내역을 순회할 수 있다.
+  정지점은 초기 rowid high-water이며 값은 현재 내용을 읽는다. 변경 불가능한
+  시점 snapshot이라고 주장하지 않는다.
+
+GET /api/v2/records/{resource}/export
+  전체 NDJSON stream. begin → record 반복 → end 순서.
+  마지막 end에는 complete=true, 실제 반환 record 수, stream SHA256이 있다.
+  중단된 연결·권한 회수·저장소 오류로 end가 없으면 완결된 내보내기가 아니다.
+  page 개수를 제한하지 않는다. 호출자에게 허가된 범위만 반환한다.
+
+주요 resource:
+  cases, findings, contributions, case_notes, case_tasks, case_feedback,
+  case_bookmarks, case_movements, audit, quarantine, source_proofs, projections,
+  effects, response_history, file_verdicts, sandbox_jobs, playbook_runs,
+  analysis_runs, behavior_runs, source_monitor_runs, identity_history,
+  pipeline_clocks, pipeline_case_clocks, governance_decisions, source_registry,
+  artifact_metadata, capacity_alerts.
+
+logs/export는 해당 tenant/index의 indexed original을 analytical transaction
+snapshot으로 전부 stream한다. 기존 200 MiB 전체 검색 snapshot cache 한도와
+분리되어 있으며 총 로그 건수 상한이 없다. 인덱싱 중인 durable queue 내역은
+아직 검색 원본에 포함되지 않았음을 scope에 표시한다. segment read lease를
+유지해 원본 파일 삭제/게시 경합을 막고 disconnect 때 transaction/cursor를 닫는다.
+대량 JSON 일괄 응답보다 stream을 권장하며, 병행 쓰기는 기존 저장소 계약을 따른다.
+GET /api/v2/effects/{id}/history는 현행 effect/Case 권한으로 전체 버전 이력을 반환한다.
+
+4. 용량 관리
+
+GET /api/v2/records/management: 정책, 허가된 tenant 기록 수, disk free/used,
+warning/critical 상태, export resource 및 보존 의미.
+PUT /api/v2/records/management: version CAS와 관리자 감사가 있는 정책 변경.
+  기본 tenant의 전체 index 관리자만 전역 정책을 변경할 수 있다.
+  permanent=false나 유한 lifetime count로 되돌리는 요청은 거부한다.
+  page_size, warning_free_percent/critical_free_percent와 용량 정리 설정을 관리한다.
+  새 정책 기본값: page_size=1000, warning=25%, critical=5%, min_free_percent=20,
+  cleanup_hysteresis_percent=5, capacity_check_seconds=60, cleanup_batch_rows=5000,
+  capacity_cleanup_enabled=true, protect_case_evidence=true.
+  기존 관리자의 경보 설정은 유지한다. 정책은 version CAS를 사용해 부분 갱신한다.
+전용 worker가 최대 60초 간격으로 저장 볼륨을 확인한다. 사용률 80%에 도달하면
+서버 received 시각 순으로 오래된 비보호 원본·격리 로그를 정리하고 75%에서 멈춘다.
+Case 근거·북마크 원본 및 tenant/index/명시적 증거 hold는 보호한다. Case·감사·분석
+결과·대응·source 상태 이력은 정리 대상이 아니다. 실제 확보 공간, 스캔·보호·삭제
+관측 건수, 오류와 blocked 사유를 상태와 감사 이력에 기록한다.
+비율 reserve와 기존 min_free_bytes 중 큰 값을 신규 수집의 최소 여유 공간으로
+사용한다. 정리 필요 시 worker를 깨우고 신규 수집은 503/Retry-After로 재시도하게
+한다. 이미 ACK한 대기열을 버리지 않는다. 자세한 물리 회수·복구·보호 정책 및
+한계는 docs/capacity-retention.txt를 따른다.
+
+5. 연관 처리의 수량 한도
+
+v2 상관 엔진의 10000-row cohort ceiling을 없애고 seq cursor 기반 anchor page와
+시간/index/source 범위의 candidate query로 변경한다. 전체 evidence cohort를
+한 번에 적재하지 않는다. 후보 둘은 '명확한 하나'가 아님을 판정하는 데 충분하며
+이는 저장 한도가 아니라 기존 ambiguity 의미다. 원본 증거를 없애지 않는다.
+Case hold도 원본 개수 5000 ceiling을 제거하고 1000개씩 원본을 검증한다.
+전송 batch/page, 실행 동시성, 악성 입력의 길이·중첩, 로그인 rate limit, 유한
+effect lease, 분석 룰 시간창은 업무 기록 총수 한도와 구분한다. 이를 제거하여
+권한·OS 복구·메모리 보호를 손상시키지 않는다.
+
+6. 검증 범위
+
+이 추가 변경에는 pytest, E2E 재실행을 수행하지 않는다(사용자 지시).
+정적 구문/소스 대조만 기록한다. 기존 전체 회귀는 f5483c... 소스의 동결 사본에서
+정상 마감하며 현재 추가 변경의 통과 증거로 승계하지 않는다. 기존 유한 만료를
+기대하던 회귀 항목은 영구 보존으로 계약이 바뀌었으므로 향후 검증 때 명시적
+보존 정책 시나리오를 재설계해야 한다.
+
+향후 실제 효과 기준:
+  201/1001/10001 이상 Case·메모·작업·대응·분석·감사 이력의 누락 없는 조회/stream;
+  완결 end count와 DB count 대조, ACL 변경 때 중단·범위 밖 데이터 0;
+  가상 시간을 수년 전진해도 원본/receipt/Case/전체 분석 결과 유지;
+  기존 만료 intent 취소·부분 삭제 복구와 FTS rebuild 후 원본 대조;
+  cohort 10001 이상 v2 분석에서 cursor 완결·중복 기여 0;
+  동시 ingestion/export/segment maintenance·클라이언트 중단의 정리;
+  80% 정리 시작·75% 종료, FIFO·Case/hold 보호·실제 free byte 대조와 신규 수집 재시도;
+  pending 용량 intent 재개·부분 파일 교체 공간 부족·물리 회수 실패의 blocked 상태;
+  backup/restore에서 기록 수·digest·Case hold·unknown effect의 보존 대조.

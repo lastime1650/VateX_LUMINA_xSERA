@@ -1,0 +1,9 @@
+.intelligence-actions{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+#correlation-definition{font-family:Consolas,monospace;line-height:1.5;tab-size:2}
+#correlation-preview-result pre,#incident-evidence pre,#risk-evidence pre{max-height:440px;overflow:auto}
+#view-intelligence article,#view-operations article{margin-bottom:22px}
+#syslog-status{white-space:pre-wrap;font-family:Consolas,monospace}
+#federation-result{white-space:pre-wrap;max-height:440px;overflow:auto;font-family:Consolas,monospace}
+body:not([data-node-operator="true"]) .node-operator-only{display:none!important}
+#lookup-inspect-content{max-height:440px;overflow:auto}
+body[data-role="viewer"] .analyst-only,body:not([data-role="admin"]) .admin-only{display:none!important}

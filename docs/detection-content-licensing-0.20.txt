@@ -1,0 +1,75 @@
+xSERA 0.20 detection content provenance and attribution
+=====================================================
+
+Project-owned source and original rule packs: Apache-2.0
+Third-party content: its original terms, never implicitly Apache-2.0
+Canonical notices: ../THIRD_PARTY_NOTICES.md, ../LICENSE and ../NOTICE
+
+Rights provenance
+-----------------
+The human project user directly confirmed copyright/redistribution ownership of
+the original 950 XDR_V2 rules and selected Apache-2.0 on 2026-10-16. The declaration,
+its exact four-file scope, the retained earlier import note and unchanged original
+file SHA256 values are in sapientia/catalogs/provenance.json. This is a record of
+the human rights-holder declaration, not an independent title investigation.
+The original agent declaration is recorded separately in endpoint_agent/PROVENANCE.
+External YARA, capa, MITRE material and installed dependencies are excluded from
+the project-owned relicensing statement.
+
+Bundled content and optional components
+--------------------------------------
+catalogs/third_party_manifest.json records exact source-manifest/license-file
+hashes and YARA/capa upstream revisions. The YARA and capa release manifests keep
+the per-file details. Original rule bytes and their embedded notices are retained.
+No third-party Sigma corpus, installed optional engine, database, VM guest image,
+FLIRT database or malware sample is bundled. Operator-selected signature feeds,
+additional rules, dependencies and OS images need their own distribution review.
+pySigma 2.0.1 is LGPL-2.1-only, independently of any imported rule's license.
+
+Evidence notice contract
+------------------------
+content_notices bundles have schema xsera.content-notices.v1, items, complete and
+a digest of the canonical schema/items/complete object. A digest describes byte
+integrity within this application; it is not a copyright attestation.
+
+YARA scan results preserve author, authors, source SHA256, revision, repository,
+upstream commit, source URL and license URL/file when supplied. Rule meta author
+and declared license/reference are retained for operator-created rules. The
+32-match signal preview carries these fields; a separate content_notices bundle
+retains all reported matches (worker maximum 256). Output truncation remains
+explicit and does not establish complete scan coverage or a clean verdict.
+
+Sigma convert captures original author/license/references in source_notice,
+inside converted_sha256 and independent validation/review/deployment snapshots.
+The native runtime does not need pySigma/PyYAML to read that captured notice.
+An undeclared rule license remains unspecified. Legacy JSON notice metadata can
+be extracted from its pinned original without optional dependencies; legacy YAML
+without an extraction snapshot retains original source and reports the limitation.
+
+Engine observations separate program license notices from capa rule-pack notices.
+Custom capa resource licenses are unspecified, not inherited from the built-in
+pack. capa capability authors/references are retained where supplied by the tool.
+The system does not classify capabilities/strings/emulated APIs as malware proof.
+
+content_notices.for_signal(db, actor, signal, memo=None) derives notices from the
+exact persisted run identity or historical Sigma deployment and bounded parent
+ancestry. It performs no original-telemetry reads. Client-supplied notice metadata
+is never its authority. Callers must retain existing current principal, complete
+evidence scope and ancestry validation before calling it. Retired rules do not
+erase historical author/license notices. The helper reads within one supplied
+transaction; it does not cache permissions across actors or transactions.
+
+Case analysis evidence and Case export retain the derived content_notices bundle.
+The signal evidence dialog displays provided authors, terms and source locations
+as escaped text. Imported metadata is untrusted text and cannot create executable
+HTML or links. Detection review is a technical approval, not a redistribution grant.
+
+Verification scope
+------------------
+Targeted tests exercise 40 independently attributed harmless YARA rules beyond
+the preview limit, server-bound reconstruction against forged notice metadata,
+current scope revocation, native Sigma -> composite -> Case -> export with the
+optional parser unavailable, source-pack SHA/count preservation and escaped UI.
+No malicious executable, real host isolation or external sandbox guest is needed.
+Release evidence should cite actual successful JUnit/TAP results and final source
+hash; this document by itself does not assert a completed legal or runtime audit.
